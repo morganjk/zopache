@@ -25,13 +25,15 @@ class IAddale(Interface):
  
 #You can do all of the above to a container.
 class IContainer(IAddable, IRenameable, IDisplayable, IDeletable, IEditable): 
+     pass
 
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
 #So no IDeleteable or IRenameable
 class IRootContainer(IBtreeContainer,IAddable,  IDisplayable,  IEditable):):        
-        
+     pass
+
 #You cannot add things to a leaf.    
 class ILeaf(IRenameable, IDisplayable, IDeletable, IEditable):
-
+      pass
         
