@@ -17,7 +17,7 @@ def title_or_name(obj):
     return getattr(obj, '__name__', u'')
 
 
-class Add(Form):
+class AddForm(Form):
     """The add form itself is not protected. The security is checked on
     'update'. It checks if the 'require' directive of the factored item
     is respected on the context.
@@ -36,15 +36,15 @@ class Add(Form):
     @CachedProperty
     def fields(self):
         return getFactoryFields(
-            self, self.context.factory, '__parent__', '__name__')
+            self, self.factory, '__parent__', '__name__')
 
     @CachedProperty
     def actions(self):
-        add = formactions.AddAction(_("Add"), self.context.factory)
+        add = formactions.AddAction(_("Add"), self.factory)
         return Actions(add, formactions.CancelAction(_("Cancel")))
 
 
-class Edit(Form):
+class EditForm(Form):
     """
     """
     ignoreContent = False

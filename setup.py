@@ -3,9 +3,9 @@
 from os.path import join
 from setuptools import setup, find_packages
 
-name = 'dolmen.forms.crud'
-version = '3.0.crom'
-readme = open(join('src', 'dolmen', 'forms', 'crud', 'README.txt')).read()
+name = 'zopache.crud'
+version = '0.7'
+readme = open(join('src', 'zopache' , 'crud', 'README.txt')).read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
 install_requires = [
