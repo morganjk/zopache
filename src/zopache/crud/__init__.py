@@ -4,7 +4,10 @@
 from zope.i18nmessageid import MessageFactory
 i18n = MessageFactory("dolmen.forms.crud")
 
-from dolmen.forms.crud.interfaces import IAdding, IFactoryAdding
-from dolmen.forms.crud.actions import (
+
+from zopache.crud.actions import (
     AddAction, UpdateAction, DeleteAction, CancelAction)
-from dolmen.forms.crud.components import Display, Add, Edit, Delete
+from zopache.crud.components import DisplayForm, AddForm, EditForm, DeleteForm
+
+from zopache.crud.interfaces import (
+    ILeaf, IContainer, IRootContainer, IAddable, IEditable, IDeletable, IDisplayable, IRenameable)

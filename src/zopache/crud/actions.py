@@ -4,7 +4,7 @@ from cromlech.browser import IURL
 from dolmen.forms.base import Action, SuccessMarker
 from dolmen.forms.base.markers import FAILURE
 from dolmen.forms.base.utils import set_fields_data, apply_data_event
-from dolmen.forms.crud import i18n as _
+from zopache.crud import i18n as _
 from dolmen.message.utils import send
 
 from zope.event import notify
@@ -39,12 +39,11 @@ class AddAction(Action):
         if errors:
             form.submissionError = errors
             return FAILURE
-
-        obj = self.factory()
+        import pdb; pdb.set_trace()
+        obj = form.factory()
         set_fields_data(form.fields, obj, data)
         notify(ObjectCreatedEvent(obj))
-        form.context.add(obj)
-
+        form.context[data['__name__']]=obj
         message(_(u"Content created"))
         url = str(IURL(obj, form.request))
         return SuccessMarker('Added', True, url=url)

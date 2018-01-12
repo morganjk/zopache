@@ -1,15 +1,29 @@
 # -*- coding: utf-8 -*-
 
 from dolmen.forms.base import Form, DISPLAY
-from dolmen.forms.crud import actions as formactions, i18n as _
-from dolmen.forms.crud.utils import getFactoryFields, getAllFields
+from zopache.crud import actions as formactions, i18n as _
+from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
 
 from dolmen.forms.base import Actions
 from zope.cachedescriptors.property import CachedProperty
 from zope.i18nmessageid import Message
+from .interfaces import IName
 
+from dolmen.forms.base import Fields
+from cromlech.webob import Response
 
+#So we add a response factory
+#Becasue Form does not have it. If you are building an asyncio
+#server, then you have a very different response class.
+class Form (Form):
+    def responseFactory(self, status=None, headers=None):
+        if (status !=None or headers!=None):
+           response= Response(status=status,headers=headers)
+        else:
+            response = Response() 
+        return response
+    
 def title_or_name(obj):
     title = getattr(obj, 'title', None)
     if title is not None:
@@ -22,9 +36,10 @@ class AddForm(Form):
     'update'. It checks if the 'require' directive of the factored item
     is respected on the context.
     """
+
     @property
     def label(self):
-        name = getattr(self.context.factory, 'name', None)
+        name = getattr(self.factory, 'name', None)
         if name is not None:
             if isinstance(name, Message):
                 name = translate(name)
@@ -35,13 +50,19 @@ class AddForm(Form):
 
     @CachedProperty
     def fields(self):
-        return getFactoryFields(
-            self, self.factory, '__parent__', '__name__')
+        if hasattr(self,'interface'):
+            return  Fields(IName,self.interface).omit("__parent__")
+        return Fields()
+
+
+        return self.fields('__parent__', '__name__')
 
     @CachedProperty
     def actions(self):
-        add = formactions.AddAction(_("Add"), self.factory)
-        return Actions(add, formactions.CancelAction(_("Cancel")))
+        return Actions(
+              formactions.AddAction(_("Add","Add"), self.factory),
+              formactions.CancelAction(_("Cancel","Cancel")))
+
 
 
 class EditForm(Form):
@@ -49,8 +70,8 @@ class EditForm(Form):
     """
     ignoreContent = False
     ignoreRequest = False
-    actions = Actions(formactions.UpdateAction(_("Update")),
-                      formactions.CancelAction(_("Cancel")))
+    actions = Actions(formactions.UpdateAction(_("Update","Update")),
+                      formactions.CancelAction(_("Cancel","Cancel")))
 
     @property
     def label(self):
@@ -64,7 +85,7 @@ class EditForm(Form):
         return getAllFields(edited, '__parent__', '__name__')
 
 
-class Display(Form):
+class DisplayForm(Form):
     """
     """
     mode = DISPLAY
@@ -81,15 +102,18 @@ class Display(Form):
         return getAllFields(displayed, '__parent__', '__name__', 'title')
 
 
-class Delete(Form):
+class DeleteForm(Form):
     """A confirmation for to delete an object.
     """
     description = _(u"Are you really sure ?")
-    actions = Actions(formactions.DeleteAction(_("Delete")),
-                      formactions.CancelAction(_("Cancel")))
+    actions = Actions(formactions.DeleteAction(_("Delete","Delete")),
+                      formactions.CancelAction(_("Cancel","Cancel")))
 
     @property
     def label(self):
         label = _(u"delete_action", default=u"Delete: $name",
                   mapping={"name": title_or_name(self.context)})
         return translate(label)
+
+class RenameForm(Form):
+     pass
