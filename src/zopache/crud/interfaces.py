@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#This software is subject to the CV and Zope Public Licenses.
+
 from cromlech.browser.interfaces import IPublicationRoot
 from zope.interface import Interface, Attribute
 from zope.schema import TextLine, Text, Object
@@ -28,12 +30,12 @@ class IRenameable(Interface):
      pass
 
 #Objects to which you can add stuff.  You cannot add stuff to leaves.  
-class IAddable(Interface):
+class IAddContainer(Interface):
      pass
  
 #You can do all of the above to a container.
 class IContainer(IBTreeContainer,
-                 IAddable,
+                 IAddContainer,
                  IRenameable,
                  IDisplayable,
                  IDeletable,
@@ -44,7 +46,7 @@ class IContainer(IBTreeContainer,
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
 #So no IDeletable or IRenameable
-class IRootContainer(IPublicationRoot,IBTreeContainer,IAddable,  IDisplayable,  IEditable):        
+class IRootContainer(IPublicationRoot,IBTreeContainer,IAddContainer,  IDisplayable,  IEditable):        
      pass
 
 #You cannot add things to a leaf.    

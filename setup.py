@@ -3,7 +3,7 @@
 from os.path import join
 from setuptools import setup, find_packages
 
-name = 'zopache.crud'
+name = 'zopache'
 version = '0.7'
 readme = open(join('src', 'zopache' , 'crud', 'README.txt')).read()
 history = open(join('docs', 'HISTORY.txt')).read()

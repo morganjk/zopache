@@ -10,4 +10,4 @@ from zopache.crud.actions import (
 from zopache.crud.components import DisplayForm, AddForm, EditForm, DeleteForm
 
 from zopache.crud.interfaces import (
-    ILeaf, IContainer, IRootContainer, IAddable, IEditable, IDeletable, IDisplayable, IRenameable)
+    ILeaf, IContainer, IRootContainer, IAddContainer, IEditable, IDeletable, IDisplayable, IRenameable)

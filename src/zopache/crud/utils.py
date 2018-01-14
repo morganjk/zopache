@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#This software is subject to the CV and Zope Public Licenses.
 
 from dolmen.forms.base import Fields
 from zope.interface import providedBy

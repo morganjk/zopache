@@ -1,28 +1,37 @@
 # -*- coding: utf-8 -*-
+#This software is subject to the CV and Zope Public Licenses.
 
 from dolmen.forms.base import Form, DISPLAY
 from zopache.crud import actions as formactions, i18n as _
 from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
+from cromlech.browser.directives import title
+from cromlech.security import getSecurityGuards, permissions
+
 
 from dolmen.forms.base import Actions
 from zope.cachedescriptors.property import CachedProperty
 from zope.i18nmessageid import Message
-from .interfaces import IName
+from .interfaces import IName, IContainer
+from dolmen.container import BTreeContainer, IBTreeContainer
+from zope.interface import implementer
 
 from dolmen.forms.base import Fields
 from cromlech.webob import Response
+from dolmen.forms.base import action, name, context, form_component
+from .interfaces import IEditable, IDeletable, IDisplayable
 
 #So we add a response factory
 #Becasue Form does not have it. If you are building an asyncio
 #server, then you have a very different response class.
 class Form (Form):
-    def responseFactory(self, status=None, headers=None):
-        if (status !=None or headers!=None):
-           response= Response(status=status,headers=headers)
-        else:
-            response = Response() 
-        return response
+    responseFactory= Response
+    #(self, **kwargs):
+    #    import pdb ; pdb.set_trace()
+    #    if 'headers' in kwargs:
+    #       kwargs['headerList']=kwargs['headers']
+    #       del kwargs['headers']
+    #    return Response#(**kwargs) 
     
 def title_or_name(obj):
     title = getattr(obj, 'title', None)
@@ -64,7 +73,27 @@ class AddForm(Form):
               formactions.CancelAction(_("Cancel","Cancel")))
 
 
+@implementer(IContainer)
+class CrudContainer(BTreeContainer):
+    pass
+    
+@form_component
+@name (u'addContainer')
+@context(IBTreeContainer)
+@title("Add a Container")
+@permissions('Manage')
+class AddContainer(AddForm):
+        interface = IContainer
+        ignoreContent = True
+        factory=CrudContainer
 
+@form_component
+@name (u'edit')
+@context(IEditable)
+@title("Edit")
+@permissions('Manage')    
+@title("Edit")
+@permissions('Manage')
 class EditForm(Form):
     """
     """
@@ -84,7 +113,12 @@ class EditForm(Form):
         edited = self.getContentData().getContent()
         return getAllFields(edited, '__parent__', '__name__')
 
-
+@form_component
+@name (u'display')
+@context(IDisplayable)
+@title("Display")
+@title("Display")
+@permissions('Manage')    
 class DisplayForm(Form):
     """
     """
@@ -101,19 +135,24 @@ class DisplayForm(Form):
         displayed = self.getContentData().getContent()
         return getAllFields(displayed, '__parent__', '__name__', 'title')
 
-
+@form_component
+@name (u'delete')
+@context(IDeletable)
+@title("Delete")
+@permissions('Manage')    
+@title("Delete")
 class DeleteForm(Form):
     """A confirmation for to delete an object.
     """
-    description = _(u"Are you really sure ?")
+    description = _(u"Are you really sure ? This will also delete all of its children.")
     actions = Actions(formactions.DeleteAction(_("Delete","Delete")),
                       formactions.CancelAction(_("Cancel","Cancel")))
 
     @property
     def label(self):
-        label = _(u"delete_action", default=u"Delete: $name",
-                  mapping={"name": title_or_name(self.context)})
+        label = u"Delete This Object?" 
         return translate(label)
 
+    
 class RenameForm(Form):
      pass
