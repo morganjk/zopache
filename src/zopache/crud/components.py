@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+
 #This software is subject to the CV and Zope Public Licenses.
 
-from dolmen.forms.base import Form, DISPLAY
+from dolmen.forms.base import DISPLAY
 from zopache.crud import actions as formactions, i18n as _
 from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
@@ -9,29 +10,20 @@ from cromlech.browser.directives import title
 from cromlech.security import getSecurityGuards, permissions
 
 
-from dolmen.forms.base import Actions
 from zope.cachedescriptors.property import CachedProperty
 from zope.i18nmessageid import Message
 from .interfaces import IName, IContainer
 from dolmen.container import BTreeContainer, IBTreeContainer
 from zope.interface import implementer
 
+from dolmen.forms.base import Actions
 from dolmen.forms.base import Fields
-from cromlech.webob import Response
 from dolmen.forms.base import action, name, context, form_component
-from .interfaces import IEditable, IDeletable, IDisplayable
 
-#So we add a response factory
-#Becasue Form does not have it. If you are building an asyncio
-#server, then you have a very different response class.
-class Form (Form):
-    responseFactory= Response
-    #(self, **kwargs):
-    #    import pdb ; pdb.set_trace()
-    #    if 'headers' in kwargs:
-    #       kwargs['headerList']=kwargs['headers']
-    #       del kwargs['headers']
-    #    return Response#(**kwargs) 
+from cromlech.webob import Response
+from .interfaces import IEditable, IDeletable, IDisplayable
+from zopache.basics.forms import Form
+
     
 def title_or_name(obj):
     title = getattr(obj, 'title', None)
@@ -45,7 +37,6 @@ class AddForm(Form):
     'update'. It checks if the 'require' directive of the factored item
     is respected on the context.
     """
-
     @property
     def label(self):
         name = getattr(self.factory, 'name', None)
