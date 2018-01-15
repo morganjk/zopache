@@ -46,10 +46,17 @@ class IContainer(IBTreeContainer,
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
 #So no IDeletable or IRenameable
-class IRootContainer(IPublicationRoot,IBTreeContainer,IAddContainer,  IDisplayable,  IEditable):        
+class IRootContainer(IPublicationRoot,
+                     IBTreeContainer,
+                     IAddContainer,
+                     IDisplayable,
+                     IEditable):        
      pass
 
 #You cannot add things to a leaf.    
-class ILeaf(IRenameable, IDisplayable, IDeletable, IEditable):
+class ILeaf(IRenameable,
+            IDisplayable,
+            IDeletable,
+            IEditable):
       pass
         
