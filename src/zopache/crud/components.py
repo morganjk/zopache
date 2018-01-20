@@ -22,7 +22,7 @@ from dolmen.forms.base import action, name, context, form_component
 
 from cromlech.webob import Response
 from .interfaces import IEditable, IDeletable, IDisplayable
-from zopache.basics.forms import Form
+from zopache.core.forms import Form
 
     
 def title_or_name(obj):
