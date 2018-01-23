@@ -46,9 +46,16 @@ class LiteLayout(object):
 
     responseFactory = Response
     template = tal_template('layout.pt')
-
     title = u"Cromlech Lite"
-
+    def headerScripts(self):
+        return """
+   <script
+        src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    """
+    
     def __init__(self, request, context):
         self.context = context
         self.request = request

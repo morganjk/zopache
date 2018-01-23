@@ -67,12 +67,13 @@ class AddForm(Form):
 @implementer(IContainer)
 class CrudContainer(BTreeContainer):
     pass
-    
+from zopache.ttw.interfaces import IWeb    
 @form_component
 @name (u'addContainer')
 @context(IBTreeContainer)
 @title("Add a Container")
 @permissions('Manage')
+@implementer(IWeb)
 class AddContainer(AddForm):
         interface = IContainer
         ignoreContent = True
@@ -81,7 +82,6 @@ class AddContainer(AddForm):
 @form_component
 @name (u'edit')
 @context(IEditable)
-@title("Edit")
 @permissions('Manage')    
 @title("Edit")
 @permissions('Manage')
@@ -90,12 +90,16 @@ class EditForm(Form):
     """
     ignoreContent = False
     ignoreRequest = False
-    actions = Actions(formactions.UpdateAction(_("Update","Update")),
+    actions = Actions(formactions.UpdateAction(_("Update","Save And View")),
                       formactions.CancelAction(_("Cancel","Cancel")))
+
+    #USED BY HTML TO COMPILE THE TEMPLATE
+    def postProcess(self):
+         pass
 
     @property
     def label(self):
-        label = _(u"edit_action", default=u"Edit: $name",
+        label = _(u"Edit this Object", default=u"Edit: $name",
                   mapping={"name": title_or_name(self.context)})
         return translate(label)
 

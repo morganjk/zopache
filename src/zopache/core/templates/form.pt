@@ -35,6 +35,7 @@
 	 tal:define="error widget.error"
 	 tal:condition="error"
 	 tal:content="error.title" />
+      <div tal:condition="widget.htmlId()=='form-field-source'" name="editorDiv" id="editorDiv"></div>
       <tal:widget tal:content="structure widget.render()" />
     </div>
   </tal:fields>

@@ -1,0 +1,30 @@
+<html>
+<head>
+</head>
+<body>
+HISTORY FOR THIS OBJECT
+
+
+
+  <div  tal:repeat="result view/results">#
+<span tal:content="repeat/result/index" >0, 1, 2 </span>&nbsp
+
+<a tal:attributes="href python: view.url() + '/../historicview?offset='+
+    str(repeat['result'].index())">View</a>
+
+<a tal:attributes="href python: view.url() + '/../historicindex?offset='+
+    str(repeat['result'].index())">Source</a>
+<a tal:attributes="href python: view.url() + '/../restore?offset='+
+    str(repeat['result'].index())">Restore</a>
+
+ <span  tal:content="python: result['time'].Date()+' '+ result['time'].Time()">
+Feb 5, 20011 10:15:8</span>&nbsp
+ <span  tal:content=" python: result['obj'].title  ">
+</span>&nbsp
+
+<br>
+     
+   </div>
+</body>
+
+</html>

@@ -10,8 +10,11 @@ from cromlech.location import get_absolute_url
 
 from . import tal_template
 
- 
-class Form(BaseForm):
+from .scripts import Scripts
+
+from dolmen.container import IBTreeContainer
+
+class Form(BaseForm,Scripts):
     responseFactory = Response
     make_response = make_layout_response
     template = tal_template('form.pt')
@@ -22,3 +25,6 @@ class Form(BaseForm):
         for widget in self.fieldWidgets:
             widget.defaultHtmlClass.append('form-control')
             yield widget
+
+    def isBTreeContainer(self):
+         return  IBTreeContainer.providedBy(self.context)

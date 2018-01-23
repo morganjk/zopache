@@ -8,8 +8,10 @@ from dolmen.view import View, make_layout_response
 from dolmen.forms.base import Form as BaseForm
 from cromlech.location import get_absolute_url
 from cromlech.browser.interfaces import IURL, IPublicationRoot
+from .scripts import Scripts
+from dolmen.container import IBTreeContainer
 
-class Page(View):
+class Page(View,Scripts):
     responseFactory = Response
     make_response = make_layout_response
 
@@ -27,3 +29,6 @@ class Page(View):
         container = item.__parent__
         result = self.url(container)+ '/' + item.__name__
         return result
+
+    def isBTreeContainer(self):
+         return  IBTreeContainer.providedBy(self.context)    

@@ -62,6 +62,7 @@ class UpdateAction(Action):
 
         apply_data_event(form.fields, form.getContentData(), data)
         message(_(u"Content updated"))
+        form.postProcess()
         url = str(IURL(form.context, form.request))
         return SuccessMarker('Updated', True, url=url)
 

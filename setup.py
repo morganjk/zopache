@@ -13,6 +13,7 @@ install_requires = [
     'cromlech.browser >= 0.5',
     'cromlech.content',
     'cromlech.i18n',
+    'dm.historical',
     'dolmen.forms.base >= 2.0',
     'dolmen.message',
     'setuptools',

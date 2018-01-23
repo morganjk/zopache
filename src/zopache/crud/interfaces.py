@@ -6,11 +6,14 @@ from zope.interface import Interface, Attribute
 from zope.schema import TextLine, Text, Object
 from dolmen.container.interfaces import IBTreeContainer
 
+#Views that are in the app menu. 
+class IApp(Interface):
+      pass
 
 class IName(Interface):
       __name__ = TextLine(
-           title=(u"URL Name (required)"),
-           required=False,
+           title=(u"URL Segment Name (required)"),
+           required=True,
            default=None)
 
 #Objects which can be deleted.  You cannot delte the root object. 
@@ -43,6 +46,7 @@ class IContainer(IBTreeContainer,
                ): 
      pass
 
+
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
 #So no IDeletable or IRenameable
@@ -59,4 +63,5 @@ class ILeaf(IRenameable,
             IDeletable,
             IEditable):
       pass
-        
+
+
