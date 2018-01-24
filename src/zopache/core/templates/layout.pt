@@ -58,15 +58,13 @@
     <div id="wrapper">
       <div class="container" id="siteheader">
 	<div class="container">
-	  <div tal:replace="structure slot:siteheader" />
-	  <div tal:replace="structure slot:adminheader" />	  
 	</div>
       </div>
       <div class="container" id="page-content-wrapper">
 	<div id="main">
-	  <div tal:replace="structure slot:breadcrumbs" />
-	  <div tal:replace="structure slot:contextualactions" />
 	  <div id="content">
+	  <div tal:replace="structure slot:contextualactions" />
+	  <div tal:replace="structure slot:breadcrumbs" />
 	    <div tal:replace="structure content" />
 	  </div>
 	</div>

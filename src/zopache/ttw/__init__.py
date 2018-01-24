@@ -3,7 +3,7 @@
 
 from zope.i18nmessageid import MessageFactory
 i18n = MessageFactory("dolmen.forms.crud")
-
+from dolmen.template import TALTemplate
 
 from os import path
 TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')

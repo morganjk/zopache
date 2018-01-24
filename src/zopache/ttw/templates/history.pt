@@ -6,15 +6,15 @@ HISTORY FOR THIS OBJECT
 
 
 
-  <div  tal:repeat="result view/results">#
-<span tal:content="repeat/result/index" >0, 1, 2 </span>&nbsp
+  <div  tal:repeat="result view.results()">#
+    <span tal:content=" repeat.result.index" >0, 1, 2 </span>&nbsp
 
-<a tal:attributes="href python: view.url() + '/../historicview?offset='+
+<a tal:attributes="href python: view.url(context) + '/historicview?offset='+
     str(repeat['result'].index())">View</a>
 
-<a tal:attributes="href python: view.url() + '/../historicindex?offset='+
+<a tal:attributes="href python: view.url(context) + '/historicindex?offset='+
     str(repeat['result'].index())">Source</a>
-<a tal:attributes="href python: view.url() + '/../restore?offset='+
+<a tal:attributes="href python: view.url(context) + '/restore?offset='+
     str(repeat['result'].index())">Restore</a>
 
  <span  tal:content="python: result['time'].Date()+' '+ result['time'].Time()">

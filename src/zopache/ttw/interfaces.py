@@ -10,7 +10,10 @@ from zopache.crud.interfaces import *
 class IWeb(Interface):
       pass
 
-class ISource(Interface):
+class IHistoricDetails(Interface):
+      pass
+
+class ISource(Interface):      
 
     title = schema.TextLine(
         title = u'Version Name:',
@@ -42,7 +45,7 @@ class IHTML(ISourceLeaf):
 class ISourceContainer(ISource,IBTreeContainer,
                  IAddContainer,
                  IRenameable,
-                 IDeletablexshell
+                 IDeletable
                ): 
      pass
 
