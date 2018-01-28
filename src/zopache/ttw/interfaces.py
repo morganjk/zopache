@@ -5,38 +5,32 @@ from zope import interface
 from zope.interface import Interface
 from zope import schema
 from zopache.crud.interfaces import *
+from zopache.core.interfaces import ISource
 
 #Views that are in the web menu. 
 class IWeb(Interface):
       pass
 
-class IHistoricDetails(Interface):
+class IHistoryItem(Interface):
       pass
 
-class ISource(Interface):      
-
-    title = schema.TextLine(
-        title = u'Version Name:',
-        description = u'Describe this HTML Page.',
-        required = False,
-    )
-
-    source= schema.Text(
-        title = u'Source:',
-        description = u'This is the text which defines the HTML.',
-        required = False,
-        default = u'',
-    )
+class IHistoricDetails(Interface):
+      pass
 
 
 
 #NO DISPLAYALE, IT RETURNS SOME VERSION OF SOURCE
-class ISourceLeaf(ISource,IRenameable,
-            IDeletable):
+class ISourceLeaf(ISource,
+                  IRenameable,
+                  IDeletable):
       pass
 
 
-class IHTML(ISourceLeaf):
+
+#THIS IS NOT ONLY HTML, IT IS THE HTML CLASS
+#HAS TO DO WITH TRAVERSAL, AHD LOOKING UP THE VIEW
+
+class IHTMLClass(IHTML, ILeaf):
     pass
 
   

@@ -5,6 +5,11 @@ from cromlech.browser.interfaces import IPublicationRoot
 from zope.interface import Interface, Attribute
 from zope.schema import TextLine, Text, Object
 from dolmen.container.interfaces import IBTreeContainer
+from zopache.core.interfaces import ISource, IHTML
+
+#Views that are in the web menu. 
+class IWeb(Interface):
+      pass
 
 #Views that are in the app menu. 
 class IApp(Interface):
@@ -35,9 +40,11 @@ class IRenameable(Interface):
 #Objects to which you can add stuff.  You cannot add stuff to leaves.  
 class IAddContainer(Interface):
      pass
+
  
 #You can do all of the above to a container.
-class IContainer(IBTreeContainer,
+class IContainer(IHTML,
+                 IBTreeContainer,
                  IAddContainer,
                  IRenameable,
                  IDisplayable,
@@ -47,10 +54,13 @@ class IContainer(IBTreeContainer,
      pass
 
 
+
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
 #So no IDeletable or IRenameable
 class IRootContainer(IPublicationRoot,
+                     IWeb,
+                     IHTML,
                      IBTreeContainer,
                      IAddContainer,
                      IDisplayable,

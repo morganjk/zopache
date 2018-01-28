@@ -64,7 +64,7 @@
 	<div id="main">
 	  <div id="content">
 	  <div tal:replace="structure slot:contextualactions" />
-	  <div tal:replace="structure slot:breadcrumbs" />
+	  <div tal:replace="structure slot:breadcrumbs" /><br>
 	    <div tal:replace="structure content" />
 	  </div>
 	</div>

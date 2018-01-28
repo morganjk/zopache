@@ -6,7 +6,15 @@ i18n = MessageFactory("dolmen.forms.crud")
 
 
 from zopache.crud.actions import (
-    AddAction, UpdateAction, DeleteAction, CancelAction)
+    AddAction,
+    UpdateAction,
+    DeleteAction,
+    CancelAction,
+    AddAndAceEditAction,
+    AddAndCkEditAction,
+    AddAndViewAction,
+    AddAndManageAction)
+
 from zopache.crud.components import DisplayForm, AddForm, EditForm, DeleteForm
 
 from zopache.crud.interfaces import (

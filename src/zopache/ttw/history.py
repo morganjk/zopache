@@ -7,13 +7,15 @@ from . import tal_template
 from zopache.core.page  import  Page
 from dolmen.view import name, context, view_component
 from cromlech.browser.directives import title
-from dm.historical import getHistory
 from crom import target, order
 from cromdemo.interfaces import ITab
 from zope.interface import implementer
 from zopache.ttw.interfaces import IHistoricDetails
 from cromlech import browser
 from cromlech.browser.exceptions import HTTPFound
+from zopache.ttw.interfaces import IHistoryItem
+from dm.historical import getHistory
+from cromlech.security import permissions
 
 """
 #Maybe this is a much simpler versin for more recent zodb. 
@@ -30,7 +32,8 @@ def getHistory(item, size=40):
 @name('history')
 @title("History")
 @target(ITab)
-@context(Interface)
+@permissions('Manage')
+@context(ISource)
 class History(Page):
 
        def results(self):
@@ -41,43 +44,46 @@ class History(Page):
        template = tal_template('history.pt')
 
 @view_component
+@permissions('Manage')
 @name('historicindex')
 @title("Historic Index")
 @target(ITab)
-@context(ISource)
+@context(IHistoryItem)
 @implementer (IHistoricDetails)
 class HistoricIndex(Page):
-       def item(self):
-           offset=self.request.form['offset']
-           offset = int(offset)
-           item= getHistory(self.context)[offset]['obj']
-           return item
-
        def render(self ):  
-           return self.item().source
-
+           return self.context.item['obj'].source
 
 
 @view_component
 @name('historicview')
 @title("Historic View")
 @target(ITab)
-@context(ISource)
+@context(IHistoryItem)
+@permissions('Manage')
 @implementer (IHistoricDetails)
 class HistoricView (HistoricIndex):
        def render(self ):  
-           return self.item()(self)
+           context=self.context
+           item=context.item['obj']           
+           return item(self)
 
 @view_component
 @name('restore')
 @target(ITab)
-@context(ISource)
+@permissions('Manage')
+@context(IHistoryItem)
 @implementer (IHistoricDetails)
 class Restore(HistoricIndex):
-       def render(self ):  
-           self.context.title=self.item().title
-           self.context.source=self.item().source
-           newURL=self.url(self.context)+'/aceEdit'
+       def render(self ):
+           context=self.context
+           contextParent=context.__parent__
+           item=context.item['obj']
+           if hasattr(item,'title'):
+              contextParent.title=item.title
+           if hasattr(item,'source'):
+              contextParent.source=item.source
+           newURL=self.url(self.context.__parent__)+'/aceEdit'
            raise HTTPFound(newURL)
 
 

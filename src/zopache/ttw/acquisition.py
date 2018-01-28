@@ -5,7 +5,7 @@ from zope.interface import Interface
 
 
 # JUST  PARENTAL (NO ZCLASS) ACQUISITION OF OBJECTS IN CONTAINERS
-class ParentalAcquire (object):
+class Acquire (object):
   def __init__(self,context):
       self.context=context
       

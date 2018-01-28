@@ -1,22 +1,30 @@
+from dolmen.view import View
+from cromlech.webob.response import Response
+from dolmen.view import View, make_view_response
+from zope.cachedescriptors.property import CachedProperty
+from dolmen.forms.base import Actions
+from zopache.crud import actions as formactions, i18n as _
 from chameleon import PageTemplate
 from zope import interface
 from zope import schema
-from zopache.ttw.acquisition import ParentalAcquire
+from zopache.ttw.acquisition import Acquire
 from zope.schema.interfaces import IField
 from zope.interface import Interface
 from zopache.ttw.interfaces import ISource,IHTML
 from zopache.crud.components import AddForm, EditForm
 from zope.interface import implementer
 from dolmen.forms.base import action, name, context, form_component
-from dolmen.container import IBTreeContainer
+from dolmen.container import IBTreeContainer, BTreeContainer
 from crom import target, order
 from cromdemo.interfaces import ITab
 from cromlech.browser.directives import title
 from cromlech.security import permissions
 from zopache.core import Leaf
 from zopache.ttw.acescripts import AceScripts
-from zopache.ttw.interfaces import IWeb
+from zopache.crud.interfaces import IWeb
 from dolmen.view import name, context, view_component
+from zopache.crud.interfaces import IHTML
+from zopache.ttw.interfaces import IHTMLClass
 
 """
 HTML is a very important base class.  It has a field called source.  It 
@@ -31,8 +39,8 @@ python scripts to be called.   Untrusted HTML does not. There could also
 be an TrustedHTMLContainer, and an UntrustedHTML Containers
 
 """ 
-class HTMLBase(Leaf):
-
+class HTMLBase(object):
+    title=u'Original Version'
     def __init__(self):
         self.source=' '
 
@@ -50,7 +58,7 @@ class HTMLBase(Leaf):
             return context
 
 @implementer(IHTML)
-class TrustedHTML(HTMLBase):
+class TrustedHTMLBase(HTMLBase):
     def setTemplate(self):
             if not hasattr(self,'_v_compiledTemplate'):
                self.compileTemplate()
@@ -82,6 +90,13 @@ class TrustedHTML(HTMLBase):
                            template=template,
                            )
 
+@implementer(IHTMLClass)
+class HTML(TrustedHTMLBase,Leaf):
+   pass
+
+@implementer(IHTML, IBTreeContainer)
+class HTMLContainer(TrustedHTMLBase,BTreeContainer):
+   pass
 
 class AceScripts(AceScripts):
     def  footerScripts(self):
@@ -94,28 +109,13 @@ class AceScripts(AceScripts):
 class CkScripts(object):
     def  headerScripts(self):
         return """
-<style>
-.ck-editor__editable {
-    min-height: 250px;
-    }
-    </style>
-
-    <script src="https://cdn.ckeditor.com/ckeditor5/1.0.0-alpha.2/classic/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/4.4.4/standard/ckeditor.js"></script> 
         """ + AddForm.headerScripts(self)
     
     def  footerScripts(self):
         return """
-<script>
-ClassicEditor
-        .create( document.querySelector( '#form-field-source' ) )
-        .then( editor => {
-    console.log( editor );
-        } )
-        .catch( error => {
-    console.error( error );
-        } );
-    </script>
-
+ <script >CKEDITOR.replace('form-field-source',{disableNativeSpellChecker : false}); 
+</script>
         """ 
 
 
@@ -129,33 +129,45 @@ ClassicEditor
 class AddHTML(CkScripts,AddForm):
     interface = IHTML
     ignoreContent = True
-    factory=TrustedHTML
+    factory=HTML
     def footerScripts(self):
         return CkScripts.footerScripts(self)
 
     def headerScripts(self):
           return CkScripts.headerScripts(self)    
 
-from dolmen.view import View
-from cromlech.webob.response import Response
-from dolmen.view import View, make_view_response
+    @CachedProperty
+    def actions(self):
+        return Actions(
+              formactions.AddAndViewAction(_("Add and View","Add -> View"), self.factory),
+              formactions.AddAndCkEditAction(_("Add and ckEdit","Add -> ckEdit"), self.factory),
+              formactions.AddAndAceEditAction(_("Add and AceEdit","Add -> AceEdit"), self.factory),
+              formactions.CancelAction(_("Cancel","Cancel")))
+    
+
 
 @view_component
 @name('index')
-@context(IHTML)
-@title("View")
+@context(IHTMLClass)
+@title("View HTML")
 class Index(View):
     responseFactory = Response
     make_response = make_view_response
-
+    def setDisplayObject(self,item):
+        self.zopacheTemaplate=item
+        
     def render(self):
-        return self.context(self)
+        #Have to do this to avoid infiite recursion ${view.context(view)} 
+        if IHTMLClass.providedBy(self.context):
+               return self.context.source
+        else:   
+            return self.context(self)
 
 @form_component
 @context(IHTML)
 @target(ITab)
 @title("AceEdit")
-@name("aceEdit")
+@name("aceedit")
 @permissions('Manage')
 class AceditHTML(AceScripts,EditForm):
     def footerScripts(self):
@@ -166,15 +178,21 @@ class AceditHTML(AceScripts,EditForm):
 
     def postProcess(self):
         self.context.compileTemplate()            
-
+    @CachedProperty
+    def actions(self):
+        return Actions(
+              formactions.SaveAndAceEdit(_("Save","Save")),
+              formactions.SaveAndView(_("Save  and View","Save -> View")),
+              formactions.SaveAndCkEdit(_("Save and CkEdit","Save -> ckEdit")),
+              formactions.CancelAction(_("Cancel","Cancel")))
 
 @form_component
 @context(IHTML)
 @target(ITab)
-@name('ckEdit')
-@title("ckEdit")
+@name('ckedit')
+@title("CkEdit")
 @permissions('Manage')
-class ckEditHTML(CkScripts,EditForm):
+class CkEditHTML(CkScripts,EditForm):
     def footerScripts(self):
         return CkScripts.footerScripts(self)
 
@@ -184,19 +202,26 @@ class ckEditHTML(CkScripts,EditForm):
     def postProcess(self):
         self.context.compileTemplate()
 
+    @CachedProperty
+    def actions(self):
+        return Actions(
+              formactions.SaveAndCkEdit(_("Save","Save")),
+              formactions.SaveAndView(_("Save  and View","Save -> View")),
+              formactions.SaveAndAceEdit(_("Save  and AceEdit","Save -> AceEdit")),
+              formactions.CancelAction(_("Cancel","Cancel")))
 
-
+@form_component
+@context(IHTMLClass)
+@target(ITab)
+@name('manage')
+@implementer(IWeb)
+@title("Manage")
+@permissions('Manage')
+class ManageHTML(CkEditHTML):    
+   pass
         
     
-"""    
-#FOR THE ZMI, THE DEFAULT MANAGE VIEW IS THE EDIT HTML VIEW.
-class ManageHTML(EditCK):
-    grok.require("zopache.editText")
-    grok.name('manage')
-    grok.require("zopache.editText")
-
-
-
+"""
 class ViewSnippet(formlib.DisplayForm,Breadcrumbs):
        grok.context(IUntrustedHTML)
        grok.require("zopache.Untrusted")

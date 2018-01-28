@@ -13,6 +13,7 @@ from cromlech.location import get_absolute_url
 class Leaf(Contained, Persistent):
     pass
 
+
 TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 def tal_template(name):
     return TALTemplate(path.join(TEMPLATE_DIR, name))

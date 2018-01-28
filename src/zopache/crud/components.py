@@ -8,7 +8,7 @@ from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
 from cromlech.browser.directives import title
 from cromlech.security import getSecurityGuards, permissions
-
+from zopache.ttw.interfaces import ISource,IHTML
 
 from zope.cachedescriptors.property import CachedProperty
 from zope.i18nmessageid import Message
@@ -55,8 +55,6 @@ class AddForm(Form):
         return Fields()
 
 
-        return self.fields('__parent__', '__name__')
-
     @CachedProperty
     def actions(self):
         return Actions(
@@ -64,9 +62,11 @@ class AddForm(Form):
               formactions.CancelAction(_("Cancel","Cancel")))
 
 
+
 @implementer(IContainer)
 class CrudContainer(BTreeContainer):
     pass
+
 from zopache.ttw.interfaces import IWeb    
 @form_component
 @name (u'addContainer')
@@ -75,10 +75,18 @@ from zopache.ttw.interfaces import IWeb
 @permissions('Manage')
 @implementer(IWeb)
 class AddContainer(AddForm):
-        interface = IContainer
-        ignoreContent = True
-        factory=CrudContainer
+    interface = IContainer
+    ignoreContent = True
+    factory=CrudContainer
 
+    @CachedProperty
+    def actions(self):
+        return Actions(
+              formactions.AddAndManageAction(_("Add and Manage","Add"), self.factory),
+              formactions.AddAndCkEditAction(_("Add and ckEdit","Add"), self.factory),
+              formactions.AddAndAceEditAction(_("Add and AceEdit","Add"), self.factory),
+              formactions.CancelAction(_("Cancel","Cancel")))        
+        
 @form_component
 @name (u'edit')
 @context(IEditable)

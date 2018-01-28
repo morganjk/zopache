@@ -1,0 +1,40 @@
+<html metal:use-macro="context/@@standard_macros/view"
+    i18n:domain="zope">
+
+<div metal:fill-slot="headers">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+</div>
+
+<div metal:fill-slot="body">
+  <div   style="padding: 20px" 
+metal:define-macro="contents">
+
+<a tal:attributes="href python: view.url(view.context) + 'manage'"
+   tal:content="python:view.context.__name__"></a><br>
+<ul>
+<span tal:repeat="item python:view.context.values()">
+<li><a tal:attributes="href python: view.url(item) + '/manage'"
+   tal:content="python:item.__name__"></a></li>
+</span>
+</ul>
+<table >
+
+<tr tal:repeat="item python: view.context.flatten(view)" >
+      <td tal:content="structure python:item.count"> </td>
+      <td tal:content="structure python: u'&nbsp;&nbsp;' + item.line"></td> 
+</tr>
+
+
+
+</table>
+
+
+
+
+</div>
+</div>
+</html>
+
+

@@ -46,10 +46,36 @@ class AddAction(Action):
         notify(ObjectCreatedEvent(obj))
         form.context[data['__name__']]=obj
         message(_(u"Content created"))
-        url = str(IURL(obj, form.request))
+        baseURL = str(IURL(obj, form.request))    
+        url=self.newURL(baseURL)
+        form.new=obj
+        form.postProcess()
         return SuccessMarker('Added', True, url=url,code=307)
 
+    def newURL(self,baseURL):
+        return baseURL
 
+class AddAndManageAction(AddAction):
+    def newURL(self,baseURL):
+        return baseURL + '/manage'
+
+class AddAndCkEditAction(AddAction):
+    def url(self,baseURL):
+        return baseURL + '/ckedit'
+
+
+class AddAndAceEditAction(AddAction):
+    def newURL(self,baseURL):
+        return baseURL + '/aceedit'
+    
+class AddAndManageAction(AddAction):
+    def newURL(self,baseURL):
+        return baseURL + '/manage'
+
+class AddAndViewAction(AddAction):
+    def newURL(self,baseURL):
+        return baseURL + '/index'        
+    
 class UpdateAction(Action):
     """Update action for any locatable object.
     """
@@ -63,9 +89,21 @@ class UpdateAction(Action):
         apply_data_event(form.fields, form.getContentData(), data)
         message(_(u"Content updated"))
         form.postProcess()
-        url = str(IURL(form.context, form.request))
+        baseURL = str(IURL(form.context, form.request))
+        url=self.newURL(baseURL)
         return SuccessMarker('Updated', True, url=url)
 
+class SaveAndView(UpdateAction):
+    def newURL(self,baseURL):
+        return baseURL + '/index'
+    
+class SaveAndCkEdit(UpdateAction):
+    def newURL(self,baseURL):
+        return baseURL + '/ckedit'
+    
+class SaveAndAceEdit(UpdateAction):
+    def newURL(self,baseURL):
+        return baseURL + '/aceedit'                
 
 class DeleteAction(Action):
     """Delete action for any locatable context.

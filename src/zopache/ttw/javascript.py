@@ -1,21 +1,28 @@
+from . import tal_template
 from zope import interface
 from zope import schema
 from zope.schema.interfaces import IField
 from zope.interface import Interface
 from zopache.ttw.interfaces import ISource
-from zopache.crud.components import AddForm
+from zopache.ttw.addeditforms import AceAddForm, AceEditForm
+
 from zope.interface import implementer
 from dolmen.forms.base import action, name, context, form_component
-from dolmen.container import IBTreeContainer
+from dolmen.container import IBTreeContainer,BTreeContainer
 from crom import target, order
 from cromdemo.interfaces import ITab
 from cromlech.browser.directives import title
 from cromlech.security import permissions
 from zopache.core import Leaf
 from zopache.ttw.acescripts import AceScripts
-from dolmen.container import BTreeContainer
-
-from zopache.ttw.interfaces import ISourceLeaf, ISourceContainer, IWeb
+from zopache.crud.interfaces import IContainer
+from dolmen.view import name, context, view_component
+from cromlech.webob.response import Response
+from dolmen.view import View, make_layout_response
+from zope.cachedescriptors.property import CachedProperty
+from zopache.ttw.interfaces import ISourceLeaf, ISourceContainer
+from zopache.crud.interfaces import IWeb
+from zopache.core.page  import  Page
 
 class IJavascript(ISource):
     "Basic Javascript Form"
@@ -33,9 +40,10 @@ class IJavascript(ISource):
         default = u' ',
     )
 
-
-class IJavascriptFolder(IJavascript, ISourceContainer):
-    "Basic Javascript Folder Form"
+class IJavascriptFolder(IJavascript,IContainer):
+        "Basic Javascript Folder Form"
+        pass
+        
 
 @implementer(IJavascript)      
 class Javascript(Leaf):
@@ -66,8 +74,24 @@ class Javascript(Leaf):
     def __call__(self,view,**args):
             return self.getSource()
 
+    def createJavascriptCaches(self):
+        parentJavascriptFolders=self.parentsWhichImplement(IJavascriptFolder)
+
+        # YOU MAY WANT TO IMPROVE THIS BY USING THE JSMIN LIBRARY
+        for folder in parentJavascriptFolders:
+             folder.sourceCache=folder.getSource()
+
+    def parentsWhichImplement(self,interface):
+           item=self
+           result=[]
+           while (item!=None):
+             if interface.providedBy(item):
+                       result.append(item)
+             item=item.__parent__
+             return result
+                                        
 @implementer(IJavascriptFolder)
-class JavascriptFolder(BTreeContainer):
+class JavascriptFolder(Javascript,BTreeContainer):
     source =u''
     sourceCache=u''
     className='Javascript Folder'
@@ -136,7 +160,7 @@ class JavascriptFolder(BTreeContainer):
 
          return result
 
-from zopache.ttw.acescripts import AceScripts
+
 class  AceScripts(AceScripts):
     def  footerScripts(self):
         return self.aceEditorFooter + """ 
@@ -155,11 +179,16 @@ class  AceScripts(AceScripts):
 @title("Add Javascript")
 @permissions('Manage')
 @implementer(IWeb)
-class AddJavascript(AceScripts,AddForm):
+class AddJavascript(AceScripts,AceAddForm):
     interface = IJavascript
     ignoreContent = True
     factory=Javascript
 
+    def postProcess(self):
+        self.new.createJavascriptCaches()    
+
+
+    
 @form_component
 @name('addJavascriptFolder')
 @context(IBTreeContainer)
@@ -167,99 +196,63 @@ class AddJavascript(AceScripts,AddForm):
 @title("Add JavascriptFolder")
 @permissions('Manage')
 @implementer(IWeb)
-class AddJavascriptFolder(AceScripts,AddForm):
+class AddJavascriptFolder(AceScripts,AceAddForm):
     interface = IJavascriptFolder
     ignoreContent = True
     factory=JavascriptFolder    
-    
-                
-"""
-class EditJavascript(MyEditForm,Scripts):
-    grok.template ("default_template_form")
-    grok.require("zopache.Untrusted")
-    grok.context(IJavascript)
-    label = 'Edit Javascript Object'
-    grok.name('edit')
-    form_fields =  grok.AutoFields(IJavascript) 
 
-    @grok.action('Edit Javascript Object')
-    def edit(self, **data):
-        self.applyData(self.context, **data)
-        self.createJavascriptCaches()    
-        self.status=u'Javascript Was Edited'
-     
-    def createJavascriptCaches(self):
-        parentJavascriptFolders=parentsWhichImplement(self.context,IJavascriptFolder)
-        # YOU MAY WANT TO IMPROVE THIS BY USING THE JSMIN LIBRARY
-        for folder in parentJavascriptFolders:
-            folder.sourceCache=folder.getSource()
+    def postProcess(self):
+        self.new.createJavascriptCaches()
+        
+def make_javascript_response(view, result, *args, **kwargs):
+        response = view.responseFactory()
+        response.write(result or u'')
+        response.content_type=u'application/javascript' 
+        return response
 
+@view_component
+@name('index')
+@context(IJavascript)
+@title("View Javascript")
+class JavascriptIndex(Page):
+    responseFactory = Response
+    make_response = make_javascript_response
+        
+    def render(self):
+               return self.context.source
 
-class ManageJavascript(EditJavascript):
-     grok.context(IJavascript)
-     grok.name('manage')
-
-from zopache.zmi.folder import Manage as ManageFolder
-class ManageJavascriptFolder(ManageFolder):
-     grok.context(IJavascriptFolder)
-     grok.name('list')
-
-class EditJavascriptFolder(EditJavascript):
-     grok.context(IJavascriptFolder)
-
-class ZopacheView(grok.View):
-    grok.baseclass()
-    def setDisplayObject(self,anObject):       
-               self.zopacheTemplate=anObject
-
-
-    def getTheObject(self):
-            if hasattr(self,'zopacheTemplate'):
-                 theObject=self.zopacheTemplate
-            else:
-                 theObject=self.context
-            return theObject
-
-class JavascriptIndex(ZopacheView):
-       grok.context(IJavascript)
-       grok.name('index')
-       
-       def render(self ):
-            self.response.setHeader('Content-Type', 
-                          u'application/javascript') 
-            theObject=self.getTheObject()
-            if IJavascriptFolder.providedBy(theObject):
-                   return theObject.sourceCache
-            else: 
-                   return theObject.source               
-
-class RawIndex(ZopacheView):
-       grok.context(IJavascript)
-       grok.name('rawindex')
-       
-       def render(self ):
-            self.response.setHeader('Content-Type', 
-                          u'application/javascript') 
-            theObject=self.getTheObject()
+    def render(self ):
             if IJavascriptFolder.providedBy(self.context):
-                   return theObject.getSource()
+                   return self.context.sourceCache
             else: 
-                   return theObject.source               
+                   return self.context.source
+               
+@form_component
+@context(IJavascript)
+@target(ITab)
+@title("AceEdit")
+@name("aceedit")
+@permissions('Manage')
+class AceEditJavascript(AceScripts,AceEditForm):
+    def footerScripts(self):
+        return AceScripts.footerScripts(self)
 
+    def headerScripts(self):
+          return AceScripts.headerScripts(self)    
 
-
-
-from zopache.zmi.breadcrumbs import Breadcrumbs
-class SearchJavascriptFolder(grok.View,Breadcrumbs):
-       grok.require("zopache.History")
-       grok.context(IJavascriptFolder)
-       grok.template ("javascriptFolder")
-       grok.name('manage')
-       label="Search Javascript Folder"
-       className='Javacript Folder'
+    def postProcess(self):
+        self.context.createJavascriptCaches()
+        
+@view_component
+@name('search')
+@title("Search")
+@target(ITab)
+@context(IJavascriptFolder)
+class Search(Page):
+    template = tal_template('javascriptFolder.pt')
+    label="Search Javascript Folder"
+    className='Javacript Folder'
        
-
-"""    
 
 
 
