@@ -28,3 +28,8 @@ class Form(BaseForm,Scripts):
 
     def isBTreeContainer(self):
          return  IBTreeContainer.providedBy(self.context)
+
+    #USED BY HTML TO COMPILE THE TEMPLATE
+    def postProcess(self):
+         pass
+

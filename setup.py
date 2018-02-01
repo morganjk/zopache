@@ -9,6 +9,7 @@ readme = open(join('src', 'zopache' , 'crud', 'README.txt')).read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
 install_requires = [
+    'arrow',
     'crom',
     'cromlech.browser >= 0.5',
     'cromlech.content',
@@ -19,12 +20,13 @@ install_requires = [
     'dolmen.message',
     'setuptools',
     'zope.cachedescriptors',
+    'zope.copy',
     'zope.event',
-    'zope.i18nmessageid',
     'zope.interface',
     'zope.lifecycleevent',
     'zope.location',
     'zope.schema',
+    
     ]
 
 tests_require = [

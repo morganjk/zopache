@@ -39,6 +39,8 @@ class IHTMLClass(IHTML, ILeaf):
 class ISourceContainer(ISource,IBTreeContainer,
                  IAddContainer,
                  IRenameable,
+                       ICopyable,
+                       IMoveable,
                  IDeletable
                ): 
      pass

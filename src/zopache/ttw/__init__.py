@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from zope.i18nmessageid import MessageFactory
-i18n = MessageFactory("dolmen.forms.crud")
+i18n = MessageFactory("zopache.ttw")
+
 from dolmen.template import TALTemplate
 
 from os import path

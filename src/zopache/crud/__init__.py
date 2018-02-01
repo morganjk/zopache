@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from zope.i18nmessageid import MessageFactory
-i18n = MessageFactory("dolmen.forms.crud")
 
+from zope.i18nmessageid import MessageFactory
+i18n = MessageFactory("zopache.crud")
 
 from zopache.crud.actions import (
     AddAction,

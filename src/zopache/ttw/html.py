@@ -71,7 +71,8 @@ class TrustedHTMLBase(HTMLBase):
 
     # I AM NOT QUITE SURE WHY I HAVE 3 DIFFERENT CALL FUCTIONS
     def __call__(self,view,**args):
-            context=self.getContext(view)
+            import pdb; pdb.set_trace()
+            context=view.getContext()
             return self.callWithContext(view,context,**args)
 
     def callWithContext(self,view,context,**args):
@@ -213,7 +214,7 @@ class CkEditHTML(CkScripts,EditForm):
 @form_component
 @context(IHTMLClass)
 @target(ITab)
-@name('manage')
+@name('manage2')
 @implementer(IWeb)
 @title("Manage")
 @permissions('Manage')

@@ -6,12 +6,11 @@ from dolmen.forms.base import DISPLAY
 from zopache.crud import actions as formactions, i18n as _
 from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
-from cromlech.browser.directives import title
+
 from cromlech.security import getSecurityGuards, permissions
 from zopache.ttw.interfaces import ISource,IHTML
 
 from zope.cachedescriptors.property import CachedProperty
-from zope.i18nmessageid import Message
 from .interfaces import IName, IContainer
 from dolmen.container import BTreeContainer, IBTreeContainer
 from zope.interface import implementer
@@ -20,16 +19,12 @@ from dolmen.forms.base import Actions
 from dolmen.forms.base import Fields
 from dolmen.forms.base import action, name, context, form_component
 
+from zopache.core import title_or_name    
 from cromlech.webob import Response
 from .interfaces import IEditable, IDeletable, IDisplayable
 from zopache.core.forms import Form
 
-    
-def title_or_name(obj):
-    title = getattr(obj, 'title', None)
-    if title is not None:
-        return title
-    return getattr(obj, '__name__', u'')
+from cromlech.browser.directives import title
 
 
 class AddForm(Form):
@@ -37,16 +32,7 @@ class AddForm(Form):
     'update'. It checks if the 'require' directive of the factored item
     is respected on the context.
     """
-    @property
-    def label(self):
-        name = getattr(self.factory, 'name', None)
-        if name is not None:
-            if isinstance(name, Message):
-                name = translate(name)
-            return translate(
-                _(u"add_action", default="Add: $name",
-                  mapping={'name': name}))
-        return 'Add'
+    label= 'Add an Object'
 
     @CachedProperty
     def fields(self):
@@ -101,9 +87,6 @@ class EditForm(Form):
     actions = Actions(formactions.UpdateAction(_("Update","Save And View")),
                       formactions.CancelAction(_("Cancel","Cancel")))
 
-    #USED BY HTML TO COMPILE THE TEMPLATE
-    def postProcess(self):
-         pass
 
     @property
     def label(self):

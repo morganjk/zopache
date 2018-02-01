@@ -244,7 +244,7 @@ class AceEditJavascript(AceScripts,AceEditForm):
         self.context.createJavascriptCaches()
         
 @view_component
-@name('search')
+@name('manage')
 @title("Search")
 @target(ITab)
 @context(IJavascriptFolder)

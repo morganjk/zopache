@@ -37,16 +37,28 @@ class IDisplayable(Interface):
 class IRenameable(Interface):
      pass
 
+class IMoveable(Interface):
+      pass
+
+class ICopyable(Interface):
+      pass
+
 #Objects to which you can add stuff.  You cannot add stuff to leaves.  
 class IAddContainer(Interface):
      pass
 
+class IMoeabletale(Interface):
+      pass
+
+class ICopyable (Interface):
+       pass
  
 #You can do all of the above to a container.
 class IContainer(IHTML,
                  IBTreeContainer,
                  IAddContainer,
                  IRenameable,
+                 ICopyable,
                  IDisplayable,
                  IDeletable,
                  IEditable
@@ -71,6 +83,8 @@ class IRootContainer(IPublicationRoot,
 class ILeaf(IRenameable,
             IDisplayable,
             IDeletable,
+                 IMoveable,
+                 ICopyable,
             IEditable):
       pass
 
