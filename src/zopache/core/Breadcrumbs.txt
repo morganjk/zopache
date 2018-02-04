@@ -1,0 +1,27 @@
+So breadcrumbs tell you where you are in a hierarchy.
+
+The first two do the same thing.
+They show title if avaiable
+They reverence to the .../index pages. 
+view.breadcrums*(
+view.breadcrumbsIndex()
+
+The following links to the .../manage pages
+view.breadcrumbsManage()
+
+And there are some deeper apis.  Read the source code if you need to. 
+
+My original version of breadcrumbs, worked but was messy.
+
+The version used in dolmen.breadcrumbs had some good ideas,
+but it is too complex.  In particular it uses an adapter
+to get the html for each crumb.  Fine if you
+are really reusing components, but for most
+beginners, even for me, it was way way too difficult to
+understand.
+
+And this version has some additional functionality.
+There is one set of breadcrumbs for index views, and another
+for manage views.
+
+Anyhow whichever one you use 
