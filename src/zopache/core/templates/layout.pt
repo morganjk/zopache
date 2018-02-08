@@ -55,6 +55,7 @@
     </style>
   </head>
   <body>
+<center><h1>Management View</h1>    </center>
     <div id="wrapper">
       <div class="container" id="siteheader">
 	<div class="container">
@@ -64,7 +65,6 @@
 	<div id="main">
 	  <div id="content">
 	  <div tal:replace="structure slot:contextualactions" />
-	  <div tal:replace="structure slot:breadcrumbs" /><br>
 	    <div tal:replace="structure content" />
 	  </div>
 	</div>

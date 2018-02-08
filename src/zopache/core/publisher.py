@@ -4,6 +4,7 @@ from  zopache.core.traverser import Traverser
 from cromlech.dawnlight.utils import safeguard
 from cromlech.browser import IPublisher, IView, IResponseFactory
 from zope.interface.interfaces import ComponentLookupError
+from zopache.ttw.historyitem import HistoryTraverser
 
 from cromlech.dawnlight.publish import shortcuts, PublicationError
 
@@ -22,9 +23,15 @@ class Publisher (DawnlightPublisher):
         context=root
 
         while crumbs:
-               name=crumbs.popleft()[1]
-               context, view =traverser(context,request,name)
-               if view != None:
+           aType, name=crumbs.popleft()
+           if (aType =='history'):
+              # CALL THE HISTORY TRAVERSER
+              print ("Historic Item  " , name, context.__name__)
+              historyTraverser=HistoryTraverser(context,None)
+              context=historyTraverser.traverse('history',name)
+              continue
+           context, view =traverser(context,request,name)
+           if view != None:
                     break
 
         #If that did not work  check for a default view

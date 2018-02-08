@@ -1,3 +1,5 @@
+	${structure: view.breadcrumbsManage()}
+
 <style>
 th, td {
     padding: 15px;

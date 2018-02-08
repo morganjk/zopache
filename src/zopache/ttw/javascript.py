@@ -34,8 +34,8 @@ class IJavascript(ISource):
     )
 
     source= schema.Text(
-        title = u'Javascript',
-        description = u'This is the text which defines the Javascriot.',
+        title = u'Javascript Source Code',
+        description = u'The Javascript code goes here.',
         required = False,
         default = u' ',
     )
@@ -180,6 +180,7 @@ class  AceScripts(AceScripts):
 @permissions('Manage')
 @implementer(IWeb)
 class AddJavascript(AceScripts,AceAddForm):
+    label='Add a Javascript Object'
     interface = IJavascript
     ignoreContent = True
     factory=Javascript
@@ -197,6 +198,7 @@ class AddJavascript(AceScripts,AceAddForm):
 @permissions('Manage')
 @implementer(IWeb)
 class AddJavascriptFolder(AceScripts,AceAddForm):
+    label = 'Add a Javascript Folder'
     interface = IJavascriptFolder
     ignoreContent = True
     factory=JavascriptFolder    
@@ -234,6 +236,7 @@ class JavascriptIndex(Page):
 @name("aceedit")
 @permissions('Manage')
 class AceEditJavascript(AceScripts,AceEditForm):
+    label='Edit a Javascript Folder or Object'
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 

@@ -21,7 +21,9 @@ from .contents import Contents
 class Manage(Page,Contents):
     label='Manage Folder'
     template = tal_template('zmi.pt')
-
+    def breadcrumbs(self):     
+        return self.breadcrumbsManage(self)
+    
 #USED TO FIRE UP A DEBUGGER TO MAKE MANUAL CHANGES    
 class Fix(Manage):
        def update(self):

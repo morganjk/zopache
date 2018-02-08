@@ -2,7 +2,7 @@
 #This software is subject to the CV and Zope Public Licenses.
 
 from os import path
-
+from zopache.crud.interfaces import IWeb
 from cromlech.webob.response import Response
 from dolmen.view import View, make_layout_response
 from dolmen.forms.base import Form as BaseForm
@@ -10,8 +10,10 @@ from cromlech.location import get_absolute_url
 from cromlech.browser.interfaces import IURL, IPublicationRoot
 from .scripts import Scripts
 from dolmen.container import IBTreeContainer
+from .breadcrumbs import Breadcrumbs
 
-class Page(View,Scripts):
+class Page(View,Scripts,Breadcrumbs):
+    count=0
     responseFactory = Response
     make_response = make_layout_response
 
@@ -44,3 +46,10 @@ class Page(View,Scripts):
               result += name
            result +='</a>'
            return result
+
+
+    # Don't show add HTML CSS Javascript Image
+    #def contentItems(self):
+            
+#if IWeb.implementedBy(aClass):
+ #                  continue       

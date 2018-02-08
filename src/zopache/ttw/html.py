@@ -1,17 +1,19 @@
-from dolmen.view import View
 from cromlech.webob.response import Response
-from dolmen.view import View, make_view_response
+from dolmen.view import  make_view_response
+from zopache.core import View
+from zopache.core.breadcrumbs import Breadcrumbs
 from zope.cachedescriptors.property import CachedProperty
 from dolmen.forms.base import Actions
 from zopache.crud import actions as formactions, i18n as _
+
 from chameleon import PageTemplate
 from zope import interface
 from zope import schema
 from zopache.ttw.acquisition import Acquire
 from zope.schema.interfaces import IField
 from zope.interface import Interface
-from zopache.ttw.interfaces import ISource,IHTML
-from zopache.crud.components import AddForm, EditForm
+from zopache.core.interfaces import ISource,IHTML, IAceHTML,ICkHTML
+from zopache.crud.forms import AddForm, EditForm
 from zope.interface import implementer
 from dolmen.forms.base import action, name, context, form_component
 from dolmen.container import IBTreeContainer, BTreeContainer
@@ -23,8 +25,7 @@ from zopache.core import Leaf
 from zopache.ttw.acescripts import AceScripts
 from zopache.crud.interfaces import IWeb
 from dolmen.view import name, context, view_component
-from zopache.crud.interfaces import IHTML
-from zopache.ttw.interfaces import IHTMLClass
+from zopache.ttw.interfaces import IHTMLClass,IAceHTMLClass,IIndexHTML
 
 """
 HTML is a very important base class.  It has a field called source.  It 
@@ -39,10 +40,13 @@ python scripts to be called.   Untrusted HTML does not. There could also
 be an TrustedHTMLContainer, and an UntrustedHTML Containers
 
 """ 
+class HTMLRecursionError(Exception):
+        pass
+
+
 class HTMLBase(object):
     title=u'Original Version'
-    def __init__(self):
-        self.source=' '
+    source=''
 
     def getTitle(self):
         if hasattr(self,'title') and self.title!= None and len(self.title)>0:
@@ -50,15 +54,8 @@ class HTMLBase(object):
         else: 
            return 'Please edit the  Title'
 
-    def getContext(self,view):
-            if hasattr(view,'getContext'):
-               context=view.getContext()
-            else:
-                context=view.context
-            return context
 
-@implementer(IHTML)
-class TrustedHTMLBase(HTMLBase):
+class TrustedHTML(HTMLBase):
     def setTemplate(self):
             if not hasattr(self,'_v_compiledTemplate'):
                self.compileTemplate()
@@ -69,10 +66,12 @@ class TrustedHTMLBase(HTMLBase):
                  self._v_compiledTemplate = PageTemplate(source)
                  return self._v_compiledTemplate
 
-    # I AM NOT QUITE SURE WHY I HAVE 3 DIFFERENT CALL FUCTIONS
+    #So here we pass the context into the template    
     def __call__(self,view,**args):
-            import pdb; pdb.set_trace()
-            context=view.getContext()
+            view.count+= 1
+            if view.count>50:
+                raise HTMLRecursionError()
+            context=view.context
             return self.callWithContext(view,context,**args)
 
     def callWithContext(self,view,context,**args):
@@ -92,12 +91,13 @@ class TrustedHTMLBase(HTMLBase):
                            )
 
 @implementer(IHTMLClass)
-class HTML(TrustedHTMLBase,Leaf):
+class HTML(TrustedHTML,Leaf):
    pass
 
-@implementer(IHTML, IBTreeContainer)
-class HTMLContainer(TrustedHTMLBase,BTreeContainer):
-   pass
+@implementer(IAceHTMLClass)
+class AceHTML(TrustedHTML,Leaf):
+    pass
+
 
 class AceScripts(AceScripts):
     def  footerScripts(self):
@@ -120,23 +120,29 @@ class CkScripts(object):
         """ 
 
 
-@form_component
-@name('addHTML')
-@context(IBTreeContainer)
-@target(ITab)
-@title("Add HTML")
-@permissions('Manage')
-@implementer(IWeb)
-class AddHTML(CkScripts,AddForm):
+class AddHTMLBase(AddForm):
     interface = IHTML
     ignoreContent = True
+
+@form_component
+@name (u'addHTML')
+@context(IBTreeContainer)
+@title("Add CkHTML.")
+@permissions('Manage')
+@implementer(IWeb)
+class AddCkHTML(AddHTMLBase,CkScripts):
+    label="Add an HTML Object"
     factory=HTML
+
     def footerScripts(self):
         return CkScripts.footerScripts(self)
 
     def headerScripts(self):
-          return CkScripts.headerScripts(self)    
+          return CkScripts.headerScripts(self)
 
+    def postProcess(self):
+        self.context.compileTemplate()
+        
     @CachedProperty
     def actions(self):
         return Actions(
@@ -144,33 +150,64 @@ class AddHTML(CkScripts,AddForm):
               formactions.AddAndCkEditAction(_("Add and ckEdit","Add -> ckEdit"), self.factory),
               formactions.AddAndAceEditAction(_("Add and AceEdit","Add -> AceEdit"), self.factory),
               formactions.CancelAction(_("Cancel","Cancel")))
-    
+
+@form_component
+@name (u'addAceHTML')
+@context(IBTreeContainer)
+@title("Add HTML")
+@permissions('Manage')
+@implementer(IWeb)  
+class AddAceHTML(AddHTMLBase,AceScripts):
+    label="Add an Ace HTML Object"
+    factory=AceHTML
+
+    def footerScripts(self):
+        return AceScripts.footerScripts(self)
+
+    def headerScripts(self):
+          return AceScripts.headerScripts(self)      
+    @CachedProperty
+    def actions(self):
+        return Actions(
+              formactions.AddAndViewAction(_("Add and View","Add -> View"), self.factory),
+              formactions.AddAndAceEditAction(_("Add and AceEdit","Add -> AceEdit"), self.factory),
+              formactions.CancelAction(_("Cancel","Cancel")))
+    def postProcess(self):
+        self.context.compileTemplate()                    
 
 
 @view_component
 @name('index')
-@context(IHTMLClass)
+@context(IIndexHTML)
 @title("View HTML")
-class Index(View):
+class Index(View,Breadcrumbs):
+    count=0
     responseFactory = Response
     make_response = make_view_response
     def setDisplayObject(self,item):
-        self.zopacheTemaplate=item
+        self.zopacheTemplate=item
         
     def render(self):
-        #Have to do this to avoid infiite recursion ${view.context(view)} 
-        if IHTMLClass.providedBy(self.context):
-               return self.context.source
-        else:   
-            return self.context(self)
+        #In the case of /index/index
+        if not hasattr(self,'zopacheTemplate'):
+               self.zopacheTemplate=self.context
+               self.context=self.context.__parent__
+        try:
+               return self.zopacheTemplate(self)
+        except HTMLRecursionError:
+               return ('Your templates recursion exceeded 50 calls'+
+                      self.zopacheTemplate.source)               
+
+
 
 @form_component
-@context(IHTML)
+@context(IAceHTML)
 @target(ITab)
 @title("AceEdit")
 @name("aceedit")
 @permissions('Manage')
-class AceditHTML(AceScripts,EditForm):
+class AceEditHTML(AceScripts,EditForm):
+    label="Ace Edit this object"
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 
@@ -179,13 +216,21 @@ class AceditHTML(AceScripts,EditForm):
 
     def postProcess(self):
         self.context.compileTemplate()            
+
     @CachedProperty
     def actions(self):
-        return Actions(
-              formactions.SaveAndAceEdit(_("Save","Save")),
-              formactions.SaveAndView(_("Save  and View","Save -> View")),
-              formactions.SaveAndCkEdit(_("Save and CkEdit","Save -> ckEdit")),
-              formactions.CancelAction(_("Cancel","Cancel")))
+
+        action1=formactions.SaveAndAceEdit("Save","Save")
+        action2=formactions.SaveAndView("Save  and View","Save -> View")
+
+        action3=formactions.SaveAndCkEdit(
+                "Save and CkEdit","Save -> ckEdit")
+
+        action4=formactions.CancelAction("Cancel","Cancel")
+        if ICkHTML.providedBy(self.context):
+                return Actions(action1,action2,action3,action4)
+        return Actions(action1,action2,action4)        
+
 
 @form_component
 @context(IHTML)
@@ -194,6 +239,8 @@ class AceditHTML(AceScripts,EditForm):
 @title("CkEdit")
 @permissions('Manage')
 class CkEditHTML(CkScripts,EditForm):
+    label="CkEdit this object"
+    
     def footerScripts(self):
         return CkScripts.footerScripts(self)
 
@@ -206,30 +253,38 @@ class CkEditHTML(CkScripts,EditForm):
     @CachedProperty
     def actions(self):
         return Actions(
-              formactions.SaveAndCkEdit(_("Save","Save")),
               formactions.SaveAndView(_("Save  and View","Save -> View")),
+              formactions.SaveAndCkEdit(_("Save","Save")),
               formactions.SaveAndAceEdit(_("Save  and AceEdit","Save -> AceEdit")),
               formactions.CancelAction(_("Cancel","Cancel")))
 
+    
 @form_component
 @context(IHTMLClass)
 @target(ITab)
-@name('manage2')
+@name('manage')
 @implementer(IWeb)
 @title("Manage")
 @permissions('Manage')
 class ManageHTML(CkEditHTML):    
    pass
-        
-    
-"""
-class ViewSnippet(formlib.DisplayForm,Breadcrumbs):
-       grok.context(IUntrustedHTML)
-       grok.require("zopache.Untrusted")
-       grok.name('snippet')
-       form_fields=[]
 
-       def _render_template(self ):
+@form_component
+@context(IAceHTMLClass)
+@target(ITab)
+@name('manage')
+@implementer(IWeb)
+@title("Manage")
+@permissions('Manage')
+class ManageAceHTML(AceEditHTML):    
+   pass
+
+@view_component
+@name('viewsource')
+@context(IIndexHTML)
+@title("HTML Source")
+class ViewSource(Index):
+    def render(self):
             top="<html><head></head><body>"
             middle=self.context.source
             bottom="</body></html>"
@@ -237,7 +292,7 @@ class ViewSnippet(formlib.DisplayForm,Breadcrumbs):
 
 
 
-"""        
+
 
 """
 #This stuff is used in my production servers,

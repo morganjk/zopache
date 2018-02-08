@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 #This software is subject to the CV and Zope Public Licenses.
-
+from zope.interface import Interface
 from dolmen.forms.base import DISPLAY
 from zopache.crud import actions as formactions, i18n as _
 from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
 
 from cromlech.security import getSecurityGuards, permissions
-from zopache.ttw.interfaces import ISource,IHTML
+from zopache.core.interfaces import ISource,IHTML
 
 from zope.cachedescriptors.property import CachedProperty
 from .interfaces import IName, IContainer
@@ -48,30 +48,6 @@ class AddForm(Form):
               formactions.CancelAction(_("Cancel","Cancel")))
 
 
-
-@implementer(IContainer)
-class CrudContainer(BTreeContainer):
-    pass
-
-from zopache.ttw.interfaces import IWeb    
-@form_component
-@name (u'addContainer')
-@context(IBTreeContainer)
-@title("Add a Container")
-@permissions('Manage')
-@implementer(IWeb)
-class AddContainer(AddForm):
-    interface = IContainer
-    ignoreContent = True
-    factory=CrudContainer
-
-    @CachedProperty
-    def actions(self):
-        return Actions(
-              formactions.AddAndManageAction(_("Add and Manage","Add"), self.factory),
-              formactions.AddAndCkEditAction(_("Add and ckEdit","Add"), self.factory),
-              formactions.AddAndAceEditAction(_("Add and AceEdit","Add"), self.factory),
-              formactions.CancelAction(_("Cancel","Cancel")))        
         
 @form_component
 @name (u'edit')
@@ -86,7 +62,11 @@ class EditForm(Form):
     ignoreRequest = False
     actions = Actions(formactions.UpdateAction(_("Update","Save And View")),
                       formactions.CancelAction(_("Cancel","Cancel")))
-
+    @CachedProperty
+    def fields(self):
+        if hasattr(self,'interface'):
+            return  Fields(IName,self.interface).omit("__parent__")
+        return Fields()
 
     @property
     def label(self):

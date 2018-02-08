@@ -1,5 +1,5 @@
 from dolmen.forms.base import action, name, context, form_component
-from zopache.crud.components import AddForm, EditForm
+from zopache.crud.forms import AddForm, EditForm
 from zope.cachedescriptors.property import CachedProperty
 from dolmen.forms.base import action, name, context, form_component
 from dolmen.forms.base import Actions

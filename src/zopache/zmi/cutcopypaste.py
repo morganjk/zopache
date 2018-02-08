@@ -30,19 +30,15 @@ from zopache.zmi.interfaces import IObjectPaster
 
 from dolmen.container.interfaces import IBTreeContainer#, IOrderedContainer
 from zopache.core import getRoot
-from .utilities import pasteFolder
+from .utilities import pasteFolder, uniqueName
+
 class BaseClass(object):
     def __init__(self, object):
         self.context = object
         self.__parent__ = object # TODO: see if we can automate this
 
     def uniqueName(self,target, new_name):
-        count=0
-        copyName=new_name+'Copy'
-        while target.has_key(new_name):
-               count +=1
-               new_name=copyName+str(count)
-        return new_name
+        return uniqueName(target, new_name)
 
     def moveFrom(self,firstFolder,firstName, secondFolder, secondName):
         obj=firstFolder[firstName]                   

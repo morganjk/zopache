@@ -2,8 +2,6 @@ from zope.location.location import LocationIterator
 from zope.interface import Interface
 
 
-
-
 # JUST  PARENTAL (NO ZCLASS) ACQUISITION OF OBJECTS IN CONTAINERS
 class Acquire (object):
   def __init__(self,context):

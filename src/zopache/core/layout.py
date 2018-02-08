@@ -71,6 +71,7 @@ class LiteLayout(object):
         return namespace
 
     def __call__(self, content, **namespace):
+
         environ = self.namespace(**namespace)
         environ['content'] = content
         if self.template is None:

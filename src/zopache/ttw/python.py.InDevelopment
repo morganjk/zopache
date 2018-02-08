@@ -1,5 +1,5 @@
-#This software is subject to the CV License Agreement.
-
+#sheThis software is subject to the CV License Agreement
+from zope.schema import ValidationError
 from dolmen.forms.base import Actions
 from zopache.crud import actions as formactions, i18n as _
 from zopache.crud.actions import AddAction,EditAction
@@ -28,7 +28,7 @@ from zopache.ttw.acescripts import AceScripts
 from zopache.ttw.interfaces import ISourceLeaf
 
 class IPython(ISourceLeaf):
-    """Basic CSS FORM with CRUD"""
+    """Basic Python  FORM with CRUD"""
     title = schema.TextLine(
         title = u'Title',
         description = u'A short reminder of what this Python code  does or its version name.',
@@ -42,16 +42,13 @@ class IPython(ISourceLeaf):
     )
     
     source= schema.Text(
-        title = u'Python SOurce Code',
+        title = u'Python Source Code',
         description = u'The Python code goes here.',
         required = False,
         default = u'',
     )
 
 
-
-    
-    
 @implementer(IPython)
 class Python(Leaf):
 
@@ -64,16 +61,15 @@ class Python(Leaf):
     #We could compile it when loaded from the ZODB
     def getCode(self):
        if not hasattr(self,'_v_code'):
-          self.compileAndSavePython()
+          self.compile()
        return self._v_code
 
-    def justCompilePython(self,code):
-        return compile_restricted_function('', self.source, self.__name__)        
-    def compileAndJavePython(self):
-        compiled=compile_restricted_function('', self.source, self.__name__)
-        self.saveResults(compiled)
-
-    def saveResults(self,compiled):
+    def compile(self):
+        compiled = compile_restricted_function(
+            'self',
+            self.source,
+            self.__name__,
+            filename='<inline code>')        
         self._v_code=compiled.code
         self._v_errors=compiled.errors
         self._v_warnings=compiled.warnings
@@ -98,15 +94,19 @@ class  AceScripts(AceScripts):
         """
 
 class ValidatePython(object):    
-         def validate(self):
-             self.parentClass.validate(self)
-             newCode=self.request.POST.get('form.field.source')
-             result=self.context.compile(newCode)
-             if result._v_errors != None:
+         def validate(self,form):
+             self.parentClass.validate(self,form)
+             new=Python()
+             newCode=form.request.POST.get('form.field.source')
+             new.source=newCode
+             result=new.compile()
+             if new._v_errors != None:
+                 self.errors="Failed"
                  raise ValidationError()
-             if self._v_warnings != None:
+             if new._v_warnings != None:
+                 self.errors="Failed"
                  raise ValidationError()             
-             self.errors="Failed"
+
              
 class AddPythonAndEdit(ValidatePython,AddAction):
     parentClass=AddAction
@@ -139,6 +139,9 @@ class AddPython(AceScripts,AceAddForm):
     ignoreContent = True
     factory=Python
     
+    def postProcess(self):
+        self.new.compile()    
+
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 

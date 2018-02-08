@@ -1,3 +1,4 @@
+import arrow
 from zope.interface import Interface
 from pprint import pprint as pp 
 from .css import ICSS
@@ -35,14 +36,23 @@ def getHistory(item, size=40):
 @permissions('Manage')
 @context(ISource)
 class History(Page):
-
+       def __call__(self ):
+           return Page.__call__(self)
+           
        def results(self):
            return getHistory(self.context,last=200)
 
        def pp(self,item):
            return pp(item)
+    
        template = tal_template('history.pt')
-
+       def humanizeTime(self,aTime):
+                result = arrow.get(aTime)
+                result = result.humanize()
+                if (result [-3:] == 'ago'):
+                   result = result [:-3]
+                return result
+         
 @view_component
 @permissions('Manage')
 @name('historicindex')
@@ -51,7 +61,7 @@ class History(Page):
 @context(IHistoryItem)
 @implementer (IHistoricDetails)
 class HistoricIndex(Page):
-       def render(self ):  
+       def render(self ):
            return self.context.item['obj'].source
 
 
@@ -62,10 +72,10 @@ class HistoricIndex(Page):
 @context(IHistoryItem)
 @permissions('Manage')
 @implementer (IHistoricDetails)
-class HistoricView (HistoricIndex):
-       def render(self ):  
-           context=self.context
-           item=context.item['obj']           
+class HistoricView (Page):
+       def render(self ):
+           import pdb; pdb.set_trace()   
+           item=self.context.item['obj']           
            return item(self)
 
 @view_component
@@ -74,7 +84,7 @@ class HistoricView (HistoricIndex):
 @permissions('Manage')
 @context(IHistoryItem)
 @implementer (IHistoricDetails)
-class Restore(HistoricIndex):
+class Restore(Page):
        def render(self ):
            context=self.context
            contextParent=context.__parent__
@@ -83,7 +93,7 @@ class Restore(HistoricIndex):
               contextParent.title=item.title
            if hasattr(item,'source'):
               contextParent.source=item.source
-           newURL=self.url(self.context.__parent__)+'/aceEdit'
+           newURL=self.url(self.context.__parent__)+'/history'
            raise HTTPFound(newURL)
 
 

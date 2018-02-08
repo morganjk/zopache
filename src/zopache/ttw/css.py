@@ -35,8 +35,8 @@ class ICSS(ISourceLeaf):
     )
 
     source= schema.Text(
-        title = u'CSS',
-        description = u'This is the text which defines the CSS.',
+        title = u'CSS Source Code',
+        description = u'The CSS goes here.',
         required = False,
         default = u'',
     )
@@ -70,7 +70,7 @@ class  AceScripts(AceScripts):
 @permissions('Manage')
 @implementer(IWeb)
 class AddCSS(AceScripts,AceAddForm):
-    implements=IWeb
+    label='Add a CSS Object'
     interface = ICSS
     ignoreContent = True
     factory=CSS
@@ -111,6 +111,7 @@ class Index(View):
 @name("aceedit")
 @permissions('Manage')
 class AceEditCSS(AceScripts,AceEditForm):
+    label='Edit a CSS Object'
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 

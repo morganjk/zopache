@@ -3,7 +3,7 @@ from zopache.core.scripts import Scripts
 class  AceScripts(object):
     def  headerScripts(self):
         return """
-<script src="https://cdn.jsdelivr.net/ace/1.1.8/min/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/ace/1.2.4/min/ace.js"></script>
     """+Scripts.headerScripts(self)
     
 

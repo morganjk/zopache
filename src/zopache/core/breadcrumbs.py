@@ -6,6 +6,7 @@ from dolmen.location import lineage_chain
 from dolmen.location import resolve_url
 from dolmen.location import get_absolute_url
 from zopache.ttw.acquisition import Acquire
+from dolmen.container import IBTreeContainer
 
 try:
         from urllib import quote  # Python 2.X
@@ -34,7 +35,7 @@ def nameAndTitle(item,showTitles):
 class Breadcrumbs(object):
     
     def breadcrumbsIndex(self,item):
-        return self.breadcrumbsView(item,viewName='index',showTitles=True)
+        return self.breadcrumbsView(item,viewName='',showTitles=True)
     
     def breadcrumbsManage(self):
         return self.breadcrumbsView(self.context,viewName='manage',showTitles=False)
@@ -89,14 +90,34 @@ class Breadcrumbs(object):
               result += name
            result +='</a>'
            return result
-   
+
     def acquire(self,name):
             return Acquire(self)[name]
 
     def acquireTitle(self):
         parents = lineage_chain(self.context)
         parents.reverse()
-        for item in parents():
+        for item in parents:
             if (hasattr(item,'title') and
                item.title!=''):
                return item.title
+        return ''
+
+
+    def url(self, *args):
+        if len(args)==0:
+           return get_absolute_url(self.context, self.request)
+        else:
+            return  get_absolute_url((args)[0], self.request)
+           
+    #And here is a much simpler implementation of URL.
+    #Only good for this zodb application. 
+    def simpleUrl(self,item):
+        import pdb; pdb.set_trace()
+        if IPublicationRoot.providedBy(item):
+           return self.request.application_url
+        container = item.__parent__
+        result = self.url(container)+ '/' + item.__name__
+        return result
+
+   

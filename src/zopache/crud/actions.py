@@ -11,7 +11,8 @@ from cromlech.browser.exceptions import HTTPFound
 from zope.event import notify
 from zope.location import ILocation
 from zope.lifecycleevent import ObjectCreatedEvent
-
+from zopache.ttw.interfaces import IHTMLClass
+from zopache.zmi.utilities import uniqueName
 
 def message(message):
     send(message)
@@ -40,11 +41,13 @@ class AddAction(Action):
         if errors:
             form.submissionError = errors
             return FAILURE
-
         obj = form.factory()
+        context=form.context
         set_fields_data(form.fields, obj, data)
         notify(ObjectCreatedEvent(obj))
-        form.context[data['__name__']]=obj
+        name=data['__name__']
+        newName=uniqueName(context,name,ofType="#")
+        context[newName]=obj
         message(_(u"Content created"))
         baseURL = str(IURL(obj, form.request))    
         url=self.newURL(baseURL)
@@ -60,13 +63,17 @@ class AddAndManageAction(AddAction):
         return baseURL + '/manage'
 
 class AddAndCkEditAction(AddAction):
-    def url(self,baseURL):
+    def newURL(self,baseURL):
         return baseURL + '/ckedit'
 
 
 class AddAndAceEditAction(AddAction):
     def newURL(self,baseURL):
         return baseURL + '/aceedit'
+
+class AddAndViewSourceAction(AddAction):
+    def newURL(self,baseURL):
+        return baseURL + '/viewsource'    
     
 class AddAndManageAction(AddAction):
     def newURL(self,baseURL):
@@ -81,6 +88,7 @@ class UpdateAction(Action):
     """
 
     def __call__(self, form):
+        self.form=form
         data, errors = form.extractData()
         if errors:
             form.submissionError = errors
@@ -88,14 +96,23 @@ class UpdateAction(Action):
 
         apply_data_event(form.fields, form.getContentData(), data)
         message(_(u"Content updated"))
+
         form.postProcess()
         baseURL = str(IURL(form.context, form.request))
         url=self.newURL(baseURL)
         return SuccessMarker('Updated', True, url=url)
 
+        def newURL(self,baseURL):
+            return baseURL 
+
+#JUST TO MAKE IT EASIER TO UNDERSTAND        
+class EditAction(UpdateAction):
+    pass
+    
 class SaveAndView(UpdateAction):
-    def newURL(self,baseURL):
-        return baseURL + '/index'
+        def newURL(self,baseURL):
+               return baseURL
+
     
 class SaveAndCkEdit(UpdateAction):
     def newURL(self,baseURL):

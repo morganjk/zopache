@@ -9,7 +9,6 @@ from zope.interface.interfaces import ComponentLookupError
 from zopache.ttw.acquisition import Acquire
 from copy import copy 
 from dolmen.container import IBTreeContainer
-from zopache.ttw.historyitem import HistoryTraverser
 
 class Traverser(object):
     def __init__(self,view_lookup):
@@ -27,20 +26,14 @@ class Traverser(object):
             else:
                print ("Not indexing container", context.__name__)         
 
-
-        #NOW TRYING TO TRAVERSE HISTORY ITEMS    
-        if ((len(name)>11) and (name[:11] =='++history++')):
-           # CALL THE HISTORY TRAVERSER
-           print ("Historic Item  " , name,context.__name__)
-           item=HistoricTraverser(context,None).traverse('++history++',name)
-           print ("Not displaying History for ", name,context.__name__)
-           return item , None
-
         #NOW CHECK FOR A VIEW ON A THE FINAL NODE
-        view = self.view_lookup(request, context, name)
-        if view is not None:
+        try:
+           view = self.view_lookup(request, context, name)
+           if view is not None:
               return context, view
-          
+        except:
+             view=None
+        return context, None
 
     def checkForDefaultView(self,context,request,name):
         #NOW CHECK FOR A VIEW ON A THE FINAL NODE

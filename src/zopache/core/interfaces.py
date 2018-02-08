@@ -15,8 +15,16 @@ class ISource(Interface):
         required = False,
         default = u'',
     )
+class IIndexHTML(Interface):
+      pass
+  
+class ICkHTML (ISource):
+     pass
 
-class IHTML (ISource):
+class IAceHTML(ISource): 
+     pass
+
+class IHTML (ICkHTML,IAceHTML,ISource):
       pass
 
-    
+ 
