@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from cromlech.browser import IPublicationRoot
-from dolmen.location import lineage_chain
-from dolmen.location import resolve_url
-from dolmen.location import get_absolute_url
+from cromlech.location import lineage_chain
+from cromlech.location import resolve_url
+from cromlech.location import get_absolute_url
 from zopache.ttw.acquisition import Acquire
 from dolmen.container import IBTreeContainer
 
