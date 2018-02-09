@@ -154,7 +154,7 @@ class AddCkHTML(AddHTMLBase,CkScripts):
 @form_component
 @name (u'addAceHTML')
 @context(IBTreeContainer)
-@title("Add HTML")
+@title("Add Ace HTML")
 @permissions('Manage')
 @implementer(IWeb)  
 class AddAceHTML(AddHTMLBase,AceScripts):

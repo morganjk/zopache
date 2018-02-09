@@ -37,6 +37,7 @@ class AddAction(Action):
         self.factory = factory
 
     def __call__(self, form):
+        self.form=form
         data, errors = form.extractData()
         if errors:
             form.submissionError = errors
@@ -50,8 +51,8 @@ class AddAction(Action):
         context[newName]=obj
         message(_(u"Content created"))
         baseURL = str(IURL(obj, form.request))    
+        self.new=form.new=obj
         url=self.newURL(baseURL)
-        form.new=obj
         form.postProcess()
         return SuccessMarker('Added', True, url=url,code=307)
 
