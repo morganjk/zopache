@@ -21,9 +21,7 @@ class IHistoricDetails(Interface):
 
 
 #NO DISPLAYALE, IT RETURNS SOME VERSION OF SOURCE
-class ISourceLeaf(ISource,
-                  IRenameable,
-                  IDeletable):
+class ISourceLeaf(ISource,ILeaf):
       pass
 
 class IIndexHTML(Interface):

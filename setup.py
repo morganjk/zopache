@@ -18,6 +18,7 @@ install_requires = [
     'dm.historical',
     'dolmen.forms.base >= 2.0',
     'dolmen.message',
+    'fanstatic',
     'restrictedpython',
     'setuptools',
     'zope.cachedescriptors',

@@ -47,6 +47,7 @@ class IJavascriptFolder(IJavascript,IContainer):
 
 @implementer(IJavascript)      
 class Javascript(Leaf):
+    icon="ttwicons/Javascript.svg"    
     source =u''
     className='Javascript'
 

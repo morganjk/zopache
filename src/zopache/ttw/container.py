@@ -17,6 +17,7 @@ from zope.interface import Interface
 
 @implementer(IHTMLContainer)
 class HTMLContainer(TrustedHTML,BTreeContainer):
+    icon="ttwicons/Container.svg"
     def __init__(self):
         BTreeContainer.__init__(self)
 

@@ -45,7 +45,7 @@ class ICSS(ISourceLeaf):
 
 @implementer(ICSS)
 class CSS(Leaf):
-
+    icon="ttwicons/CSS.svg"
     def commands(self,view):
         url=view.url(self)
         index=view.liHref(url+'/index','View')

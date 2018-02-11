@@ -45,6 +45,7 @@ class HTMLRecursionError(Exception):
 
 
 class HTMLBase(object):
+    icon="ttwicons/HTML.svg"
     title=u'Original Version'
     source=''
 

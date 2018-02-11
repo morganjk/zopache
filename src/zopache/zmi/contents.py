@@ -269,7 +269,7 @@ class Contents(object):
             cutter = self.cutter=Cutter(ob)
             if not cutter.allowed():
                 m = {"name": id}
-                title = getDCTitle(ob)
+                title = title_or_name(ob)
                 if title:
                     m["title"] = title
                     self.error =  "Object '${name}' (${title}) cannot be moved"

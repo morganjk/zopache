@@ -23,7 +23,16 @@ class Manage(Page,Contents):
     template = tal_template('zmi.pt')
     def breadcrumbs(self):     
         return self.breadcrumbsManage(self)
-    
+
+    def iconTag(self,url):
+        return """ <img height="17px" width="17px" src="%s"> </img>""" % url
+ 
+    def iconHTML(self,item):
+        if (hasattr(item,'icon') and
+           item.icon!=''):
+           return self.iconTag("/fanstatic/"+item.icon) 
+        else:
+           return ''
 #USED TO FIRE UP A DEBUGGER TO MAKE MANUAL CHANGES    
 class Fix(Manage):
        def update(self):

@@ -1,11 +1,21 @@
 	${structure: view.breadcrumbsManage()}
 
 <style>
-th, td {
-    padding: 15px;
-        text-align: left;
-	}
+btn-primary{
+     margin:20px;
+     }
+
+.table-condensed>thead>tr>th,
+.table-condensed>tbody>tr>th,
+.table-condensed>tfoot>tr>th,
+.table-condensed>thead>tr>td,
+.table-condensed>tbody>tr>td,
+.table-condensed>tfoot>tr>td{
+    padding-top: 2px;
+    padding-bottom: 2px;    
+    }
 </style>
+
     <form name="containerContentsForm" method="post" action="."
           tal:attributes="action view.url()+'/manage'"
           tal:define="container_contents view.listContentInfo()">
@@ -26,40 +36,40 @@ th, td {
         Error message
       </div>
 
-      <table id="sortable" class="listing" summary="Content listing"
+      <table id="sortable" class="table  table-striped table-responsive 
+table-hover table-condensed" summary="Content listing"
              i18n:attributes="summary">
 
-        <thead>
+        <thead  class="thead-inverse">
           <tr>
-            <th><input type="checkbox" onchange="updateCheckboxes(this, 'slaveBox');" /></th>
-            <th i18n:translate="">Name</th>
+            <th></th>
+	    <th>Icon</th>
+            <th 
+	    i18n:translate="">Name</th>
             <th i18n:translate="">Title</th>
 	     <th i18n:translate="">Class</th>
             <th i18n:translate="">Size</th>
-            <th i18n:translate="">Modified</th>
+            <th i18n:translate="">Age</th>
           </tr>
         </thead>
 
         <tbody>
-
         <metal:block tal:define="supportsRename view.supportsRename"
                      tal:repeat="item container_contents">
           <tr tal:define="oddrow repeat.item.odd; url item.url;
                           id_quoted item.url"
               tal:attributes="class python:oddrow and 'even' or 'odd'" >
             <td>
-              <input type="checkbox" class="noborder slaveBox" name="ids:list" id="#"
+              <input type="checkbox" class="slaveBox" name="ids:list" id="#"
                      value="#"
                      tal:attributes="value item.id;
                                      id item.cb_id;
                                      checked request.ids_checked|nothing;"/>
-            </td>
-            <td><a href="#"
-                 tal:attributes="href
-                                 string:${url}/manage"
-                 tal:content="structure item.icon">
-                </a>
-		<span tal:condition="item.rename"
+		  </td>
+            <td>
+	          ${structure: view.iconHTML(item['object'])}
+             </td><td>
+           <span tal:condition="item.rename"
                    ><input name="new_value:list"
                      tal:attributes="value item.id"
                      /><input type="hidden" name="rename_ids:list" value=""
@@ -110,40 +120,41 @@ th, td {
 
         </tbody>
       </table>
+       <br>
 
-      <tal:block tal:condition="view.normalButtons">
+<tal:block tal:condition="view.normalButtons">
 
-        <input type="submit" name="container_rename_button" value="Rename"
+        <button class="btn-primary" name="container_rename_button" value="Rename"
                i18n:attributes="value container-rename-button"
                tal:condition="view.supportsRename"
-               />
-        <input type="submit" name="container_cut_button" value="Cut"
+               >Rename </button>  
+        <button class="btn-primary" name="container_cut_button" value="Cut"
                i18n:attributes="value container-cut-button"
                tal:condition="view.supportsCut"
-               />
-        <input type="submit" name="container_copy_button" value="Copy"
+               >Cut </button>
+        <button class="btn-primary" name="container_copy_button" value="Copy"
                i18n:attributes="value container-copy-button"
                tal:condition="view.supportsCopy"
-               />
-        <input type="submit" name="container_paste_button" value="Paste"
+               >Copy</button>
+        <button class="btn-primary" name="container_paste_button" value="Paste"
                tal:condition="view.hasClipboardContents()"
                i18n:attributes="value container-paste-button"
-               />
-        <input type="submit" name="container_delete_button" value="Delete"
+               >Paste </button>
+        <button class="btn-primary" name="container_delete_button" value="Delete"
                i18n:attributes="value container-delete-button"
                tal:condition="view.supportsDelete"
                i18n:domain="zope"
-               />
+               >Delete </button>
 
       </tal:block>
 
       <div tal:condition="view.specialButtons">
-        <input type="submit" value="Apply"
+        <button class="btn-primary"  value="Apply"
                i18n:attributes="value container-apply-button"
-               />
-        <input type="submit" name="container_cancel_button" value="Cancel"
+               >Apply</button>
+        <button class="btn-primary" name="container_cancel_button" value="Cancel"
                i18n:attributes="value container-cancel-button"
-               />
+               >Cancel<button>
       </div>
 
     </form>

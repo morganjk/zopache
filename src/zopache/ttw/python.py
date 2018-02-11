@@ -73,7 +73,7 @@ class IPython(ISourceLeaf):
 
 @implementer(IPython)
 class PythonFunction(Leaf):
-
+    icon="ttwicons/Python.svg"    
     def commands(self,view):
         url=view.url(self)
         index=view.liHref(url+'/index','View')
