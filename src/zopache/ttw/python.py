@@ -2,7 +2,10 @@
 from zope.schema import ValidationError
 from dolmen.forms.base import Actions
 from zopache.crud import actions as formactions, i18n as _
-from zopache.crud.actions import AddAction,EditAction
+from .actions as ttwactions
+#MERGE THE TWO DICTS
+formactions.update(ttwactions) 
+from zopache.crud.actions import Add,Edit
 from zope import interface
 from zope import schema
 from zope.schema.interfaces import IField
@@ -29,6 +32,7 @@ from zopache.ttw.acescripts import AceScripts
 from zopache.ttw.interfaces import ISourceLeaf
 from RestrictedPython import safe_builtins, utility_builtins, limited_builtins
 from RestrictedPython import RestrictingNodeTransformer
+from .interfaces import ITestURL
 
 class OwnRestrictingNodeTransformer(RestrictingNodeTransformer):
         pass
@@ -41,7 +45,8 @@ policy_instance = OwnRestrictingNodeTransformer(
             used_names=[]
         )
 
-class IPython(ISourceLeaf):
+
+class IPython(ISourceLeaf,ITestURL):
     """Basic Python  FORM with CRUD"""
     arguments = schema.TextLine(
         title = u'Arguments',
@@ -63,12 +68,6 @@ class IPython(ISourceLeaf):
         required = False,
     )
 
-    testURL = schema.TextLine(
-        title = u'Test URL',
-        description = u'URL To Visit to test this script',
-        required = False,
-        default='/',            
-    )
 
 
 @implementer(IPython)
@@ -146,18 +145,18 @@ class ValidatePython(object):
                  raise ValidationError()             
              return True
              
-class AddPythonAndEdit(ValidatePython,AddAction):
-    parentClass=AddAction
+class AddPythonAndEdit(ValidatePython,Add):
+    parentClass=Add
     def newURL(self,baseURL):
         return baseURL + '/ckedit'
 
-class AddPythonAndTest(ValidatePython,AddAction):
-    parentClass=AddAction
+class AddPythonAndTest(ValidatePython,Add):
+    parentClass=Add
     def newURL(self,baseURL):
         return self.form.new.testURL
 
-class EditPython (ValidatePython, EditAction):
-    parentClass=EditAction
+class EditPython (ValidatePython, Edit):
+    parentClass=Edit
     def newURL(self,baseURL):
         return baseURL + '/ckedit'
 
@@ -170,7 +169,7 @@ class EditPython (ValidatePython, EditAction):
 
     
 class EditPythonAndTest(EditPython):
-    parentClass=EditAction
+    parentClass=Edit
     def newURL(self,baseURL):
         return self.form.context.testURL        
     
@@ -182,7 +181,7 @@ class EditPythonAndTest(EditPython):
 @permissions('Manage')
 @implementer(IWeb)
 class AddPythonFunction(AceScripts,AceAddForm):
-    label = "Add  a Python  Object"
+    subTitle = "Add  a Python  Object"
     interface = IPython
     ignoreContent = True
     factory=PythonFunction
@@ -204,7 +203,7 @@ class AddPythonFunction(AceScripts,AceAddForm):
         return Actions(
               AddPythonAndEdit(_("Add and Edit","Add -> Edit"), self.factory),
               AddPythonAndTest(_("Add and Test","Add -> Test"), self.factory),
-              formactions.CancelAction(_("Cancel","Cancel")))
+              formactions.Cancel(_("Cancel","Cancel")))
 
     #Validate on Add
     def validate(self,form):
@@ -225,7 +224,7 @@ def make_python_response(view, result, *args, **kwargs):
 @name("aceedit")
 @permissions('Manage')
 class AceEditPython(AceScripts,AceEditForm):
-    label = "Edit a Python Object"
+    subTitle= "Edit a Python Object"
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 
@@ -237,7 +236,7 @@ class AceEditPython(AceScripts,AceEditForm):
 
         action1=EditPython("Save","Save")
         action2=EditPythonAndTest("Save  and View","Save -> View")
-        action3=formactions.CancelAction("Cancel","Cancel")
+        action3=formactions.Cancel("Cancel","Cancel")
         return Actions(action1,action2,action3)
 
 

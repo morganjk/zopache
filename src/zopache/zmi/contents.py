@@ -266,6 +266,7 @@ class Contents(object):
             return
         for id in ids:
             ob = self.context[id]
+            import pdb;pdb.set_trace()
             cutter = self.cutter=Cutter(ob)
             if not cutter.allowed():
                 m = {"name": id}

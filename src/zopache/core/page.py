@@ -14,6 +14,8 @@ from .breadcrumbs import Breadcrumbs
 
 class Page(View,Scripts,Breadcrumbs):
     count=0
+    title="ZODB Management View"
+    subTitle=u''
     responseFactory = Response
     make_response = make_layout_response
 

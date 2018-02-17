@@ -15,6 +15,8 @@ from .scripts import Scripts
 from dolmen.container import IBTreeContainer
 from .breadcrumbs import Breadcrumbs
 class Form(BaseForm,Scripts,Breadcrumbs):
+    title="ZODB Management View"
+    subTitle=u''
     responseFactory = Response
     make_response = make_layout_response
     template = tal_template('form.pt')

@@ -9,6 +9,14 @@ from zopache.core.interfaces import ISource, IHTML
 from zopache.core.interfaces import IAceHTML, ICkHTML
 from zopache.crud.interfaces import ILeaf
 
+class ITestURL(Interface):    
+    testURL = schema.TextLine(
+        title = u'Test URL',
+        description = u'URL To Visit to test this script',
+        required = False,
+        default='/',            
+    )
+
 #Views that are in the web menu. 
 class IWeb(Interface):
       pass

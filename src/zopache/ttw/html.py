@@ -132,7 +132,7 @@ class AddHTMLBase(AddForm):
 @permissions('Manage')
 @implementer(IWeb)
 class AddCkHTML(AddHTMLBase,CkScripts):
-    label="Add an HTML Object"
+    subTitle="Add an HTML Object"
     factory=HTML
 
     def footerScripts(self):
@@ -147,10 +147,10 @@ class AddCkHTML(AddHTMLBase,CkScripts):
     @CachedProperty
     def actions(self):
         return Actions(
-              formactions.AddAndViewAction(_("Add and View","Add -> View"), self.factory),
-              formactions.AddAndCkEditAction(_("Add and ckEdit","Add -> ckEdit"), self.factory),
-              formactions.AddAndAceEditAction(_("Add and AceEdit","Add -> AceEdit"), self.factory),
-              formactions.CancelAction(_("Cancel","Cancel")))
+              formactions.AddAndView(_("Add and View","Add -> View"), self.factory),
+              formactions.AddAndCkEdit(_("Add and ckEdit","Add -> ckEdit"), self.factory),
+              formactions.AddAndAceEdit(_("Add and AceEdit","Add -> AceEdit"), self.factory),
+              formactions.Cancel(_("Cancel","Cancel")))
 
 @form_component
 @name (u'addAceHTML')
@@ -159,7 +159,7 @@ class AddCkHTML(AddHTMLBase,CkScripts):
 @permissions('Manage')
 @implementer(IWeb)  
 class AddAceHTML(AddHTMLBase,AceScripts):
-    label="Add an Ace HTML Object"
+    subTitle="Add an Ace HTML Object"
     factory=AceHTML
 
     def footerScripts(self):
@@ -170,9 +170,9 @@ class AddAceHTML(AddHTMLBase,AceScripts):
     @CachedProperty
     def actions(self):
         return Actions(
-              formactions.AddAndViewAction(_("Add and View","Add -> View"), self.factory),
-              formactions.AddAndAceEditAction(_("Add and AceEdit","Add -> AceEdit"), self.factory),
-              formactions.CancelAction(_("Cancel","Cancel")))
+              formactions.AddAndView(_("Add and View","Add -> View"), self.factory),
+              formactions.AddAndAceEdit(_("Add and AceEdit","Add -> AceEdit"), self.factory),
+              formactions.Cancel(_("Cancel","Cancel")))
     def postProcess(self):
         self.context.compileTemplate()                    
 
@@ -208,7 +208,7 @@ class Index(View,Breadcrumbs):
 @name("aceedit")
 @permissions('Manage')
 class AceEditHTML(AceScripts,EditForm):
-    label="Ace Edit this object"
+    subTitle="Ace Edit this object"
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 
@@ -227,7 +227,7 @@ class AceEditHTML(AceScripts,EditForm):
         action3=formactions.SaveAndCkEdit(
                 "Save and CkEdit","Save -> ckEdit")
 
-        action4=formactions.CancelAction("Cancel","Cancel")
+        action4=formactions.Cancel("Cancel","Cancel")
         if ICkHTML.providedBy(self.context):
                 return Actions(action1,action2,action3,action4)
         return Actions(action1,action2,action4)        
@@ -240,7 +240,7 @@ class AceEditHTML(AceScripts,EditForm):
 @title("CkEdit")
 @permissions('Manage')
 class CkEditHTML(CkScripts,EditForm):
-    label="CkEdit this object"
+    subTitle="CkEdit this object"
     
     def footerScripts(self):
         return CkScripts.footerScripts(self)
@@ -257,7 +257,7 @@ class CkEditHTML(CkScripts,EditForm):
               formactions.SaveAndView(_("Save  and View","Save -> View")),
               formactions.SaveAndCkEdit(_("Save","Save")),
               formactions.SaveAndAceEdit(_("Save  and AceEdit","Save -> AceEdit")),
-              formactions.CancelAction(_("Cancel","Cancel")))
+              formactions.Cancel(_("Cancel","Cancel")))
 
     
 @form_component

@@ -1,4 +1,3 @@
-${structure: view.breadcrumbs()}
 <form action="." tal:attributes="action view.action_url;
                                  id view.htmlId();
                                  method view.formMethod;

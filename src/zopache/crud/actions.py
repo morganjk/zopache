@@ -11,14 +11,13 @@ from cromlech.browser.exceptions import HTTPFound
 from zope.event import notify
 from zope.location import ILocation
 from zope.lifecycleevent import ObjectCreatedEvent
-from zopache.ttw.interfaces import IHTMLClass
-from zopache.zmi.utilities import uniqueName
+from .utilities import uniqueName
 
 def message(message):
     send(message)
 
 
-class CancelAction(Action):
+class Cancel(Action):
     """Cancel the current form and return on the default content view.
     """
 
@@ -28,12 +27,12 @@ class CancelAction(Action):
         return SuccessMarker('Aborted', True, url=url)
 
 
-class AddAction(Action):
+class Add(Action):
     """Add action for an IAdding context.
     """
 
     def __init__(self, title, factory):
-        super(AddAction, self).__init__(title)
+        super(Add, self).__init__(title)
         self.factory = factory
 
     def __call__(self, form):
@@ -42,7 +41,8 @@ class AddAction(Action):
         if errors:
             form.submissionError = errors
             return FAILURE
-        obj = form.factory()
+        obj= form.factory()
+        form.new=obj
         context=form.context
         set_fields_data(form.fields, obj, data)
         notify(ObjectCreatedEvent(obj))
@@ -59,32 +59,11 @@ class AddAction(Action):
     def newURL(self,baseURL):
         return baseURL
 
-class AddAndManageAction(AddAction):
-    def newURL(self,baseURL):
-        return baseURL + '/manage'
-
-class AddAndCkEditAction(AddAction):
-    def newURL(self,baseURL):
-        return baseURL + '/ckedit'
-
-
-class AddAndAceEditAction(AddAction):
-    def newURL(self,baseURL):
-        return baseURL + '/aceedit'
-
-class AddAndViewSourceAction(AddAction):
-    def newURL(self,baseURL):
-        return baseURL + '/viewsource'    
-    
-class AddAndManageAction(AddAction):
-    def newURL(self,baseURL):
-        return baseURL + '/manage'
-
-class AddAndViewAction(AddAction):
+class AddAndView(Add):
     def newURL(self,baseURL):
         return baseURL + '/index'        
     
-class UpdateAction(Action):
+class Update(Action):
     """Update action for any locatable object.
     """
 
@@ -107,23 +86,14 @@ class UpdateAction(Action):
             return baseURL 
 
 #JUST TO MAKE IT EASIER TO UNDERSTAND        
-class EditAction(UpdateAction):
+class Edit(Update):
     pass
     
-class SaveAndView(UpdateAction):
+class SaveAndView(Update):
         def newURL(self,baseURL):
                return baseURL
-
     
-class SaveAndCkEdit(UpdateAction):
-    def newURL(self,baseURL):
-        return baseURL + '/ckedit'
-    
-class SaveAndAceEdit(UpdateAction):
-    def newURL(self,baseURL):
-        return baseURL + '/aceedit'                
-
-class DeleteAction(Action):
+class Delete(Action):
     """Delete action for any locatable context.
     """
     successMessage = _(u"The object has been deleted.")

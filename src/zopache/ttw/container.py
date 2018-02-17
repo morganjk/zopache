@@ -31,7 +31,7 @@ from zopache.crud.interfaces import IWeb
 @permissions('Manage')
 @implementer(IWeb)
 class AddContainer(AddForm):
-    label = 'Add a Container'
+    subTitle = 'Add a Container'
     interface = Interface
     ignoreContent = True
     factory=HTMLContainer
@@ -39,7 +39,7 @@ class AddContainer(AddForm):
     @CachedProperty
     def actions(self):
         return Actions(
-              formactions.AddAndManageAction(_("Add and Manage","Add and Manage"), self.factory),
-              formactions.AddAndCkEditAction(_("Add and ckEdit","Add and CkEdit"), self.factory),
-              formactions.AddAndAceEditAction(_("Add and AceEdit","Add and AceEdit"), self.factory),
-              formactions.CancelAction(_("Cancel","Cancel")))        
+              formactions.AddAndManage(_("Add and Manage","Add and Manage"), self.factory),
+              formactions.AddAndCkEdit(_("Add and ckEdit","Add and CkEdit"), self.factory),
+              formactions.AddAndAceEdit(_("Add and AceEdit","Add and AceEdit"), self.factory),
+              formactions.Cancel(_("Cancel","Cancel")))        

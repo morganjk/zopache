@@ -30,7 +30,8 @@ from zopache.zmi.interfaces import IObjectPaster
 
 from dolmen.container.interfaces import IBTreeContainer#, IOrderedContainer
 from zopache.core import getRoot
-from .utilities import pasteFolder, uniqueName
+from .utilities import pasteFolder
+from zopache.crud.utilities import uniqueName
 
 class BaseClass(object):
     def __init__(self, object):

@@ -1,4 +1,5 @@
 from . import tal_template
+from html import escape
 from zope import interface
 from zope import schema
 from zope.schema.interfaces import IField
@@ -15,7 +16,7 @@ from cromlech.browser.directives import title
 from cromlech.security import permissions
 from zopache.core import Leaf
 from zopache.ttw.acescripts import AceScripts
-from zopache.crud.interfaces import IContainer
+from zopache.crud.interfaces import ISourceContainer
 from dolmen.view import name, context, view_component
 from cromlech.webob.response import Response
 from dolmen.view import View, make_layout_response
@@ -23,8 +24,9 @@ from zope.cachedescriptors.property import CachedProperty
 from zopache.ttw.interfaces import ISourceLeaf, ISourceContainer
 from zopache.crud.interfaces import IWeb
 from zopache.core.page  import  Page
+from .interfaces import ITestURL
 
-class IJavascript(ISource):
+class IJavascript(ISource,ISourceLeaf,ITestURL):
     "Basic Javascript Form"
 
     title = schema.TextLine(
@@ -40,7 +42,7 @@ class IJavascript(ISource):
         default = u' ',
     )
 
-class IJavascriptFolder(IJavascript,IContainer):
+class IJavascriptFolder(IJavascript,ISourceContainer):
         "Basic Javascript Folder Form"
         pass
         
@@ -49,6 +51,7 @@ class IJavascriptFolder(IJavascript,IContainer):
 class Javascript(Leaf):
     icon="ttwicons/Javascript.svg"    
     source =u''
+    title=u''
     className='Javascript'
 
     def getSource(self):
@@ -61,9 +64,11 @@ class Javascript(Leaf):
          return [self]
  
     def getLines(self):
-         result=self.source.replace(' ','mynbsp')
-         result=cgi.escape(result)
-         result=result.replace('mynbsp','&nbsp')
+         #NOT QUITE SURE WHAT THE FOLLOWING LINE WAS THERE.
+         #result=self.source.replace(' ','mynbsp')
+         result=self.source
+         result=escape(result)
+         #result=result.replace('mynbsp','&nbsp')
          return result.split("\n")
 
     def commands(self,view):
@@ -147,15 +152,15 @@ class JavascriptFolder(Javascript,BTreeContainer):
              #JUST A LINE FOR THE FILE
              lines=anObject.getLines()
              o=Record()
-             o.line=view.href(view.url(anObject)+'/edit', anObject.__name__)
-             o.line="<h1>"+o.line+"</h1>"
+             o.line=view.href(view.url(anObject)+'/aceedit', anObject.__name__)
+             o.line="<h3>"+o.line+"</h3>"
              o.count=''
              result.append(o)
 
              for line in anObject.getLines():
                  o=Record()
                  o.line=line
-                 o.count=view.href(view.url(anObject)+'/edit', str(count))
+                 o.count=view.href(view.url(anObject)+'/aceedit', str(count))
                  count=count+1
                  result.append(o)
 
@@ -181,7 +186,7 @@ class  AceScripts(AceScripts):
 @permissions('Manage')
 @implementer(IWeb)
 class AddJavascript(AceScripts,AceAddForm):
-    label='Add a Javascript Object'
+    subTitle='Add a Javascript Object'
     interface = IJavascript
     ignoreContent = True
     factory=Javascript
@@ -199,7 +204,7 @@ class AddJavascript(AceScripts,AceAddForm):
 @permissions('Manage')
 @implementer(IWeb)
 class AddJavascriptFolder(AceScripts,AceAddForm):
-    label = 'Add a Javascript Folder'
+    subTitle= 'Add a Javascript Folder'
     interface = IJavascriptFolder
     ignoreContent = True
     factory=JavascriptFolder    
@@ -237,7 +242,11 @@ class JavascriptIndex(Page):
 @name("aceedit")
 @permissions('Manage')
 class AceEditJavascript(AceScripts,AceEditForm):
-    label='Edit a Javascript Folder or Object'
+    subTitle='Ace Edit this  Javascript'
+    label=''
+    def postProcess(self):
+        self.new.createJavascriptCaches()    
+
     def footerScripts(self):
         return AceScripts.footerScripts(self)
 
@@ -246,6 +255,16 @@ class AceEditJavascript(AceScripts,AceEditForm):
 
     def postProcess(self):
         self.context.createJavascriptCaches()
+
+@form_component
+@context(IJavascript)
+@target(ITab)
+@title("AceEdit")
+@name("manage")
+@permissions('Manage')
+class ManageJavascript(AceEditJavascript):
+    pass
+
         
 @view_component
 @name('manage')
@@ -253,10 +272,10 @@ class AceEditJavascript(AceScripts,AceEditForm):
 @target(ITab)
 @context(IJavascriptFolder)
 class Search(Page):
+    subTitle=u'Search The Javascript'
     template = tal_template('javascriptFolder.pt')
-    label="Search Javascript Folder"
+    subTitle="Search Javascript Folder"
     className='Javacript Folder'
-       
 
 
 

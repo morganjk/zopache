@@ -36,6 +36,8 @@ def getHistory(item, size=40):
 @permissions('Manage')
 @context(ISource)
 class History(Page):
+       label=''
+       subTitle='Historic Versions'
        def __call__(self ):
            return Page.__call__(self)
            

@@ -8,7 +8,6 @@ from zopache.crud.utils import getFactoryFields, getAllFields
 from cromlech.i18n import translate
 
 from cromlech.security import getSecurityGuards, permissions
-from zopache.core.interfaces import ISource,IHTML
 
 from zope.cachedescriptors.property import CachedProperty
 from .interfaces import IName, IContainer
@@ -19,10 +18,10 @@ from dolmen.forms.base import Actions
 from dolmen.forms.base import Fields
 from dolmen.forms.base import action, name, context, form_component
 
-from zopache.core import title_or_name    
+from .utilities import title_or_name    
 from cromlech.webob import Response
 from .interfaces import IEditable, IDeletable, IDisplayable
-from zopache.core.forms import Form
+from .baseform import Form
 
 from cromlech.browser.directives import title
 
@@ -32,7 +31,8 @@ class AddForm(Form):
     'update'. It checks if the 'require' directive of the factored item
     is respected on the context.
     """
-    label= 'Add an Object'
+    label= ''
+    subTitle='Add an Object'
 
     @CachedProperty
     def fields(self):
@@ -44,8 +44,8 @@ class AddForm(Form):
     @CachedProperty
     def actions(self):
         return Actions(
-              formactions.AddAction(_("Add","Add"), self.factory),
-              formactions.CancelAction(_("Cancel","Cancel")))
+              formactions.Add(_("Add","Add"), self.factory),
+              formactions.Cancel(_("Cancel","Cancel")))
 
 
         
@@ -58,10 +58,11 @@ class AddForm(Form):
 class EditForm(Form):
     """
     """
+    subtitle='Edit This Object'
     ignoreContent = False
     ignoreRequest = False
-    actions = Actions(formactions.UpdateAction(_("Update","Save And View")),
-                      formactions.CancelAction(_("Cancel","Cancel")))
+    actions = Actions(formactions.Update(_("Update","Save And View")),
+                      formactions.Cancel(_("Cancel","Cancel")))
     @CachedProperty
     def fields(self):
         if hasattr(self,'interface'):
@@ -70,6 +71,7 @@ class EditForm(Form):
 
     @property
     def label(self):
+        return ''
         label = _(u"Edit this Object", default=u"Edit: $name",
                   mapping={"name": title_or_name(self.context)})
         return translate(label)
@@ -88,12 +90,15 @@ class EditForm(Form):
 class DisplayForm(Form):
     """
     """
+    label =''
+    subTitle='Display This Object'
     mode = DISPLAY
     ignoreRequest = True
     ignoreContent = False
 
     @property
     def label(self):
+        return ''
         return title_or_name(self.context)
 
     @CachedProperty
@@ -110,15 +115,21 @@ class DisplayForm(Form):
 class DeleteForm(Form):
     """A confirmation for to delete an object.
     """
+    label =''
+    subTitle='Delete This Object'
     description = _(u"Are you really sure ? This will also delete all of its children.")
-    actions = Actions(formactions.DeleteAction(_("Delete","Delete")),
-                      formactions.CancelAction(_("Cancel","Cancel")))
+    actions = Actions(formactions.Delete(_("Delete","Delete")),
+                      formactions.Cancel(_("Cancel","Cancel")))
 
     @property
     def label(self):
+        return ''
         label = u"Delete This Object?" 
         return translate(label)
 
-    
+
+#We need to implement this form.    
 class RenameForm(Form):
-     pass
+    subTitle='Rename This Object'
+    label=''
+    pass

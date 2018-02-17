@@ -24,8 +24,9 @@ from dolmen.view import View, make_view_response
 from zope.cachedescriptors.property import CachedProperty
 
 from zopache.ttw.interfaces import ISourceLeaf
+from .interfaces import ITestURL
 
-class ICSS(ISourceLeaf):
+class ICSSBase(ISourceLeaf):
     """Basic CSS FORM with CRUD"""
 
     title = schema.TextLine(
@@ -41,6 +42,9 @@ class ICSS(ISourceLeaf):
         default = u'',
     )
 
+# just so the test url would be last.     
+class ICSS(ICSSBase,ITestURL):
+    pass
 
 
 @implementer(ICSS)
@@ -70,16 +74,16 @@ class  AceScripts(AceScripts):
 @permissions('Manage')
 @implementer(IWeb)
 class AddCSS(AceScripts,AceAddForm):
-    label='Add a CSS Object'
+    subTitle='Add a CSS Object'
     interface = ICSS
     ignoreContent = True
     factory=CSS
     
-    def footerScripts(self):
-        return AceScripts.footerScripts(self)
+ #   def footerScripts(self):
+ #       return AceScripts.footerScripts(self)
 
-    def headerScripts(self):
-          return AceScripts.headerScripts(self)    
+#    def headerScripts(self):
+#          return AceScripts.headerScripts(self)    
     
     def commands(self):
         manual=self.liHref('http://www.zopache.com/baseicwebobjects/css','CSS Manual')
@@ -111,12 +115,12 @@ class Index(View):
 @name("aceedit")
 @permissions('Manage')
 class AceEditCSS(AceScripts,AceEditForm):
-    label='Edit a CSS Object'
-    def footerScripts(self):
-        return AceScripts.footerScripts(self)
+    subTitle='Edit a CSS Object'
+#    def footerScripts(self):
+#        return AceScripts.footerScripts(self)
 
-    def headerScripts(self):
-          return AceScripts.headerScripts(self)    
+#    def headerScripts(self):
+#          return AceScripts.headerScripts(self)    
 
     def postProcess(self):
         pass

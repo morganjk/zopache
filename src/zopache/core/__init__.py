@@ -40,8 +40,4 @@ def getRoot(object):
                 raise TypeError("Maximum location depth exceeded, "                                "probably due to a a location cycle.")
         raise TypeError("Parents needed to  determine location root")
 
-def title_or_name(obj):
-    title = getattr(obj, 'title', None)
-    if title is not None:
-        return title
-    return getattr(obj, '__name__', u'')
+

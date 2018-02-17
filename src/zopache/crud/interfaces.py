@@ -5,7 +5,6 @@ from cromlech.browser.interfaces import IPublicationRoot
 from zope.interface import Interface, Attribute
 from zope.schema import TextLine, Text, Object
 from dolmen.container.interfaces import IBTreeContainer
-from zopache.core.interfaces import ISource, IHTML
 
 #Views that are in the web menu. 
 class IWeb(Interface):
@@ -52,9 +51,9 @@ class IMoeabletale(Interface):
 
 class ICopyable (Interface):
        pass
- 
-#You can do all of the above to a container.
-class IContainer(IHTML,
+
+#Not HTML
+class IContainer(
                  IBTreeContainer,
                  IAddContainer,
                  IRenameable,
@@ -64,15 +63,13 @@ class IContainer(IHTML,
                  IEditable
                ): 
      pass
-
-
+ 
 
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
 #So no IDeletable or IRenameable
 class IRootContainer(IPublicationRoot,
                      IWeb,
-                     IHTML,
                      IBTreeContainer,
                      IAddContainer,
                      IDisplayable,

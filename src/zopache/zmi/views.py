@@ -12,17 +12,20 @@ from cromlech.browser.directives import title
 from dolmen.container import IBTreeContainer
 from cromdemo.interfaces import ITab
 from .contents import Contents
+from cromlech.security import permissions
 
 @view_component
 @name('manage')
 @title("Manage")
 @target(ITab)
+@permissions('Manage')
 @context(IBTreeContainer)
 class Manage(Page,Contents):
-    label='Manage Folder'
+    label=''
+    subTitle='Manage Container'
     template = tal_template('zmi.pt')
-    def breadcrumbs(self):     
-        return self.breadcrumbsManage(self)
+    def breadcrumbs(self):
+        return self.breadcrumbsManage()
 
     def iconTag(self,url):
         return """ <img height="17px" width="17px" src="%s"> </img>""" % url
@@ -33,6 +36,7 @@ class Manage(Page,Contents):
            return self.iconTag("/fanstatic/"+item.icon) 
         else:
            return ''
+       
 #USED TO FIRE UP A DEBUGGER TO MAKE MANUAL CHANGES    
 class Fix(Manage):
        def update(self):
