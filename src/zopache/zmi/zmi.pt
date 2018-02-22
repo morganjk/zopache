@@ -15,7 +15,8 @@ btn-primary{
 </style>
 
     <form name="containerContentsForm" method="post" action="."
-          tal:attributes="action view.url()+'/manage'"
+          tal:attributes=
+	  "action view.url()+('/manage')"
           tal:define="container_contents view.listContentInfo()">
 
       <input type="hidden" name="type_name" value=""
@@ -76,7 +77,7 @@ table-hover table-condensed" summary="Content listing"
                 ><span tal:condition="not:item.rename">
                   <a href="#"
                      tal:attributes="href
-                                 string:${url}/manage#manage"
+    url + ('/manage#manage' if view.isBTreeContainer(item) else '/edit#manage')"
                      tal:content="item.id"
                      >foo</a
                   ><a href="#"

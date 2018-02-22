@@ -22,9 +22,11 @@ class Container(BTreeContainer):
 
 class RootContainer (BTreeContainer):
     def __init__(self):
+       BTreeContainer.__init__(self)
+
        #Needed For Cut Copy Paste
        self.pasteFolder=BTreeContainer()
-              
+       
 TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 def tal_template(name):
     return TALTemplate(path.join(TEMPLATE_DIR, name))

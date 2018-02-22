@@ -10,7 +10,7 @@ from cromlech.i18n import translate
 from cromlech.security import getSecurityGuards, permissions
 
 from zope.cachedescriptors.property import CachedProperty
-from .interfaces import IName, IContainer
+from .interfaces import IName, IContainer, ILeaf
 from dolmen.container import BTreeContainer, IBTreeContainer
 from zope.interface import implementer
 
@@ -58,7 +58,7 @@ class AddForm(Form):
 class EditForm(Form):
     """
     """
-    subtitle='Edit This Object'
+    subTitle='Edit This Object'
     ignoreContent = False
     ignoreRequest = False
     actions = Actions(formactions.Update(_("Update","Save And View")),
@@ -80,6 +80,8 @@ class EditForm(Form):
     def fields(self):
         edited = self.getContentData().getContent()
         return getAllFields(edited, '__parent__', '__name__')
+
+
 
 @form_component
 @name (u'display')
