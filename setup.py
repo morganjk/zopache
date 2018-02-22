@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 name = 'zopache'
 version = '0.7'
-readme = open(join('src', 'zopache' , 'crud', 'README.txt')).read()
+readme = open('README.md').read()
 history = open(join('docs', 'HISTORY.txt')).read()
 
 install_requires = [

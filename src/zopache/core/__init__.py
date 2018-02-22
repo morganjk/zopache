@@ -7,14 +7,18 @@ from dolmen.template import TALTemplate
 from dolmen.view import View, make_layout_response
 from cromlech.webob.response import Response
 
+
+from cromlech.location import get_absolute_url
 from cromlech.container.contained import Contained
 from persistent import Persistent
-from cromlech.location import get_absolute_url
-
-
 class Leaf(Contained, Persistent):
+    icon=''
     pass
 
+from dolmen.container import BTreeContainer
+class Container(BTreeContainer):
+    icon=''
+    pass
 
 TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 def tal_template(name):

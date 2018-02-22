@@ -1,7 +1,7 @@
 #subject to the ZPL and CV Licenses
 
 __docformat__ = 'restructuredtext'
-from zopache.core import getRoot
+from .utilities import getRoot
 from .utilities import pasteFolder
 import six
 from six.moves import urllib_parse as urllib
@@ -10,7 +10,7 @@ from .utilities import size
 import arrow
 from .interfaces import IObjectCutter, IObjectCopier, IObjectRenamer
 from .interfaces import IObjectPaster, IObjectDeleter
-from ..core import title_or_name
+from zopache.crud.utilities import title_or_name
 from .cutcopypaste import Cutter, Paster, Copier,Renamer, Deleter
 
 class Contents(object):

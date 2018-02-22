@@ -1,4 +1,4 @@
-
+#Basically just add jquery and bootstrap to pages. 
 class Scripts(object):
    def headerScripts(self):
         return """

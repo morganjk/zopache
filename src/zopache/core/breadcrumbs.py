@@ -5,8 +5,12 @@ from cromlech.browser import IPublicationRoot
 from cromlech.location import lineage_chain
 from cromlech.location import resolve_url
 from cromlech.location import get_absolute_url
-from zopache.ttw.acquisition import Acquire
 from dolmen.container import IBTreeContainer
+
+try:
+  from zopache.ttw.acquisition import Acquire
+except ImportError:
+  Acquire=lambda x : x      
 
 try:
         from urllib import quote  # Python 2.X

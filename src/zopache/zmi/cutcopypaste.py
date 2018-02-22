@@ -17,7 +17,7 @@ __docformat__ = 'restructuredtext'
 
 import crom
 from zope.interface import implementer, Invalid
-from zope.copy import copy
+from zopache.copy import copy
 from zope.interface import implementer
 from zope.interface import Interface
 from zopache.crud.interfaces import IRenameable,IDeletable,ICopyable
@@ -29,7 +29,6 @@ from zopache.zmi.interfaces import IObjectRenamer
 from zopache.zmi.interfaces import IObjectPaster
 
 from dolmen.container.interfaces import IBTreeContainer#, IOrderedContainer
-from zopache.core import getRoot
 from .utilities import pasteFolder
 from zopache.crud.utilities import uniqueName
 

@@ -122,23 +122,23 @@ table-hover table-condensed" summary="Content listing"
 
 <tal:block tal:condition="view.normalButtons">
 
-        <button class="btn-primary" name="container_rename_button" value="Rename"
+        <button class="btn btn-primary" name="container_rename_button" value="Rename"
                i18n:attributes="value container-rename-button"
                tal:condition="view.supportsRename"
                >Rename </button>  
-        <button class="btn-primary" name="container_cut_button" value="Cut"
+        <button class="btn btn-primary" name="container_cut_button" value="Cut"
                i18n:attributes="value container-cut-button"
                tal:condition="view.supportsCut"
                >Cut </button>
-        <button class="btn-primary" name="container_copy_button" value="Copy"
+        <button class="btn btn-primary" name="container_copy_button" value="Copy"
                i18n:attributes="value container-copy-button"
                tal:condition="view.supportsCopy"
                >Copy</button>
-        <button class="btn-primary" name="container_paste_button" value="Paste"
+        <button class="btn btn-primary" name="container_paste_button" value="Paste"
                tal:condition="view.hasClipboardContents()"
                i18n:attributes="value container-paste-button"
                >Paste </button>
-        <button class="btn-primary" name="container_delete_button" value="Delete"
+        <button class="btn btn-primary" name="container_delete_button" value="Delete"
                i18n:attributes="value container-delete-button"
                tal:condition="view.supportsDelete"
                i18n:domain="zope"
@@ -147,10 +147,10 @@ table-hover table-condensed" summary="Content listing"
       </tal:block>
 
       <div tal:condition="view.specialButtons">
-        <button class="btn-primary"  value="Apply"
+        <button class="btn btn-primary"  value="Apply"
                i18n:attributes="value container-apply-button"
                >Apply</button>
-        <button class="btn-primary" name="container_cancel_button" value="Cancel"
+        <button class="btn btn-primary" name="container_cancel_button" value="Cancel"
                i18n:attributes="value container-cancel-button"
                >Cancel<button>
       </div>

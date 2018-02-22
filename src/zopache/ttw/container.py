@@ -7,7 +7,7 @@ from zope.interface import implementer
 from dolmen.forms.base import Actions
 from dolmen.forms.base import Fields
 from dolmen.forms.base import action, name, context, form_component
-from zopache.core.forms import Form
+from zopache.crud.baseform import Form
 from cromlech.browser.directives import title
 from zopache.ttw.html import HTML
 from .interfaces import IHTMLContainer

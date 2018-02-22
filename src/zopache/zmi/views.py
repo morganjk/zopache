@@ -1,10 +1,11 @@
 from zope import schema
 from zope import interface
 from cromlech.container.interfaces import IBTreeContainer
-from zopache.ttw.acquisition import Acquire
 from zopache.zmi.contents import Contents
-from zopache.core import Page
-from zopache.core.page  import  Page
+try: 
+    from zopache.core.page  import  Page
+except ImportError:
+    from cromdemo.browser import Page
 from . import tal_template
 from crom import target, order
 from dolmen.view import name, context, view_component
