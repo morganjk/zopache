@@ -2,7 +2,6 @@
 #This software is subject to the CV and Zope Public Licenses.
 
 from os import path
-from zopache.ttw.interfaces import IWeb
 from cromlech.webob.response import Response
 from dolmen.view import View, make_layout_response
 from dolmen.forms.base import Form as BaseForm

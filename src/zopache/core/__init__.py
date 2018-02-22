@@ -50,3 +50,10 @@ def getRoot(object):
         raise TypeError("Parents needed to  determine location root")
 
 
+class ErrorPage(Page):
+    code = 400
+
+    def make_response(self, *args, **kws):
+        response = make_layout_response(self, *args, **kws)
+        response.status_code = self.code
+        return response

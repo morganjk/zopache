@@ -107,7 +107,7 @@ class Breadcrumbs(object):
                return item.title
         return ''
 
-
+             
     def url(self, *args):
         if len(args)==0:
            return get_absolute_url(self.context, self.request)
