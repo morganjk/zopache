@@ -33,8 +33,6 @@ class Page(View,Scripts,Breadcrumbs):
         result = self.url(container)+ '/' + item.__name__
         return result
 
-    def isBTreeContainer(self):
-         return  IBTreeContainer.providedBy(self.context)    
 
     def objectHref(self,obj,name):
         return self.href(self.url(obj),name)

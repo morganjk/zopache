@@ -80,8 +80,8 @@ class Breadcrumbs(object):
         return ' / '+' / '.join(result)
 
     
-    def isBTreeContainer(self):
-         return  IBTreeContainer.providedBy(self.context)    
+    def isBTreeContainer(self,item):
+         return  IBTreeContainer.providedBy(item)    
 
     def objectHref(self,obj,name):
         return self.href(self.url(obj),name)
