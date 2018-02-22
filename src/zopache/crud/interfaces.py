@@ -6,7 +6,8 @@ from zope.interface import Interface, Attribute
 from zope.schema import TextLine, Text, Object
 from dolmen.container.interfaces import IBTreeContainer
 
-#Views that are in the app menu. 
+#Views that are in the app menu.
+#That menu is to be modified by users/developers. 
 class IApp(Interface):
       pass
 
