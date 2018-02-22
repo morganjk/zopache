@@ -6,7 +6,7 @@ from os import path
 from dolmen.template import TALTemplate
 from dolmen.view import View, make_layout_response
 from cromlech.webob.response import Response
-
+from dolmen.container import BTreeContainer
 
 from cromlech.location import get_absolute_url
 from cromlech.container.contained import Contained
@@ -20,6 +20,11 @@ class Container(BTreeContainer):
     icon=''
     pass
 
+class RootContainer (BTreeContainer):
+    def __init__(self):
+       #Needed For Cut Copy Paste
+       self.pasteFolder=BTreeContainer()
+              
 TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 def tal_template(name):
     return TALTemplate(path.join(TEMPLATE_DIR, name))
