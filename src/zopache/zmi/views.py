@@ -1,3 +1,4 @@
+import crom
 from zope import schema
 from zope import interface
 from cromlech.container.interfaces import IBTreeContainer
@@ -14,6 +15,7 @@ from dolmen.container import IBTreeContainer
 from cromdemo.interfaces import ITab
 from .contents import Contents
 from cromlech.security import permissions
+from zopache.zmi.interfaces import IURLSegment
 
 @view_component
 @name('manage')
@@ -25,6 +27,9 @@ class Manage(Page,Contents):
     label=''
     subTitle='Manage Container'
     template = tal_template('zmi.pt')
+    def getManageURL(self,item):
+        return IURLSegment(item)
+            
     def breadcrumbs(self):
         return self.breadcrumbsManage()
 

@@ -80,8 +80,10 @@ class Breadcrumbs(object):
         return ' / '+' / '.join(result)
 
     
-    def isBTreeContainer(self,item):
-         return  IBTreeContainer.providedBy(item)    
+    def isBTreeContainer(self,*args):
+        if (len (args)==0):
+           return  IBTreeContainer.providedBy(self.context)    
+        return  IBTreeContainer.providedBy(args[0])    
 
     def objectHref(self,obj,name):
         return self.href(self.url(obj),name)
@@ -117,7 +119,6 @@ class Breadcrumbs(object):
     #And here is a much simpler implementation of URL.
     #Only good for this zodb application. 
     def simpleUrl(self,item):
-        import pdb; pdb.set_trace()
         if IPublicationRoot.providedBy(item):
            return self.request.application_url
         container = item.__parent__

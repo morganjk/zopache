@@ -76,8 +76,7 @@ table-hover table-condensed" summary="Content listing"
                      /></span
                 ><span tal:condition="not:item.rename">
                   <a href="#"
-                     tal:attributes="href
-    url + ('/manage#manage' if view.isBTreeContainer(item) else '/edit#manage')"
+                     tal:attributes="href view.getManageURL(item.object)"
                      tal:content="item.id"
                      >foo</a
                   ><a href="#"
