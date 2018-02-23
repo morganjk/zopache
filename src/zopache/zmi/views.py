@@ -28,8 +28,10 @@ class Manage(Page,Contents):
     subTitle='Manage Container'
     template = tal_template('zmi.pt')
     def getManageURL(self,item):
-        return IURLSegment(item)
-            
+        url = self.url(item)
+        segment =  IURLSegment(item).getSegment()
+        return url + '/' + segment
+                
     def breadcrumbs(self):
         return self.breadcrumbsManage()
 
