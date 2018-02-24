@@ -221,7 +221,7 @@ class Contents(object):
         POST = request.POST
         ids = POST.getall('ids:list')
         if not ids or len(ids)==0:
-            self.error = _("You didn't specify any ids to remove.")
+            self.error = "You didn't specify any ids to remove."
             return
 
         container = self.context

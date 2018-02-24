@@ -13,38 +13,14 @@ from .breadcrumbs import Breadcrumbs
 
 class Page(View,Scripts,Breadcrumbs):
     count=0
+    error=''
     title=""
     subTitle="ZODB Management View"
     responseFactory = Response
     make_response = make_layout_response
 
-    def url(self, *args):
-        if len(args)==0:
-           return get_absolute_url(self.context, self.request)
-        else:
-            return  get_absolute_url((args)[0], self.request)
            
-    #And here is a much simpler implementation of URL.
-    #Only good for this zodb application. 
-    def simpleUrl(self,item):
-        if IPublicationRoot.providedBy(item):
-           return self.request.application_url
-        container = item.__parent__
-        result = self.url(container)+ '/' + item.__name__
-        return result
 
-
-    def objectHref(self,obj,name):
-        return self.href(self.url(obj),name)
-    
-    def href(self,url,name):
-           result ='<a href=\"'
-           result += url
-           result+='\">'
-           if name != None:
-              result += name
-           result +='</a>'
-           return result
 
 
     # Don't show add HTML CSS Javascript Image

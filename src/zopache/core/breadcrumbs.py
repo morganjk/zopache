@@ -126,3 +126,14 @@ class Breadcrumbs(object):
         return result
 
    
+    def objectHref(self,obj,name):
+        return self.href(self.url(obj),name)
+    
+    def href(self,url,name):
+           result ='<a href=\"'
+           result += url
+           result+='\">'
+           if name != None:
+              result += name
+           result +='</a>'
+           return result
