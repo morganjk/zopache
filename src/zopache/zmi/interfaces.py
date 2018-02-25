@@ -15,24 +15,7 @@ class IEditAdaptor(object):
     def getSegment(self):
         return 'edit'
 
-@crom.adapter
-@crom.sources(IAceEdit)
-@crom.target(IURLSegment)
-class IAceEditAdaptor(object):
-    def __init__(self,context):
-        self.context=context   
-    def getSegment(self):
-        return 'aceedit'
 
-
-@crom.adapter
-@crom.sources(ICkEdit)
-@crom.target(IURLSegment)
-class ICkEditAdaptor(object):
-    def __init__(self,context):
-        self.context=context   
-    def getSegment(self):
-        return 'ckedit'        
     
 @crom.adapter
 @crom.sources(IBTreeContainer)
