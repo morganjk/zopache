@@ -76,7 +76,6 @@ class Update(Action):
 
         apply_data_event(form.fields, form.getContentData(), data)
         message(_(u"Content updated"))
-
         form.postProcess()
         baseURL = str(IURL(form.context, form.request))
         url=self.newURL(baseURL)
@@ -85,6 +84,9 @@ class Update(Action):
         def newURL(self,baseURL):
             return baseURL 
 
+        def postProcess(self):
+            pass
+        
 #JUST TO MAKE IT EASIER TO UNDERSTAND        
 class Edit(Update):
     pass

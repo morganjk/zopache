@@ -130,8 +130,3 @@ class DeleteForm(Form):
         return translate(label)
 
 
-#We need to implement this form.    
-class RenameForm(Form):
-    subTitle='Rename This Object'
-    label=''
-    pass

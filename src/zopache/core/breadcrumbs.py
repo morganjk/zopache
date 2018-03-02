@@ -6,6 +6,7 @@ from cromlech.location import lineage_chain
 from cromlech.location import resolve_url
 from cromlech.location import get_absolute_url
 from dolmen.container import IBTreeContainer
+from zopache.zmi.interfaces import IURLSegment
 
 try:
   from zopache.ttw.acquisition import Acquire
@@ -52,29 +53,32 @@ class Breadcrumbs(object):
                                      viewName=viewName,
                                      showTitles=showTitles)
     
+
+    def slashViewName(self,item, viewName):      
+            slashViewName =''
+            if viewName == '':
+                if IPublicationRoot.providedBy(item):
+                   return '/'
+                else:
+                   return ''
+            elif viewName=='manage':
+               return '/' + IURLSegment(item).getSegment()
+            else:    
+                return '/' + viewName
+                
     def breadcrumbsCore(self,item,
                         viewName='',
                         showTitles=True,
                         resolver=nameAndTitle):
-        #IF YOU WANT A SPECFIC VIEWNAME, THEN PREPEND A SLASH
-        slashViewName =''             
-        if viewName != '':
-           slashViewName ='/' + viewName
-    
+
         parents = lineage_chain(item)
         result=[]
+        base_url = ''
         if parents:
             parents.reverse()
-            root = parents.pop(0)
-            base_url = ''
-            name, title = resolver(root,showTitles)
-            if viewName == '':
-                result.append( self.href('/',title))
-            else:    
-                result.append( self.href(slashViewName,title))
-                                
             for ancestor in parents:
                 name, title = resolver(ancestor,showTitles)
+                slashViewName = self.slashViewName(ancestor,viewName)
                 base_url += '/' + quote(name.encode('utf-8'), _safe)
                 result.append( self.href(base_url + slashViewName,title))
         return ' / '+' / '.join(result)

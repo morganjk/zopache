@@ -56,16 +56,23 @@ class IContainer(
                  IRenameable,
                  ICopyable,
                  IDisplayable,
-                 IDeletable,
-                 IEditable
+                 IDeletable
                ): 
      pass
+
+class IEditableContainer(IContainer,IEditable):
+          pass
  
 class IImutable(     IBTreeContainer,
                      IAddContainer,
                      IDisplayable,
-                     IEditable):
+                     ):
       pass
+
+class IEditableImutable(IImutable,IEditable):
+    pass
+      
+      
 
 #The Root Container also has to implement IPublicationRoot      
 #But you cannot delete or rename the root container
@@ -73,13 +80,16 @@ class IImutable(     IBTreeContainer,
 class IRootContainer(IPublicationRoot,IImutable):
      pass
 
+class IEditableRootContainer(IRootContainer, IEditable):
+      pass
+
 #You cannot add things to a leaf.    
 class ILeaf(IRenameable,
             IDisplayable,
             IDeletable,
                  IMoveable,
-                 ICopyable,
-            IEditable):
+                 ICopyable):
       pass
 
-
+class IEditableLeaf(ILeaf,IEditable):
+      pass
