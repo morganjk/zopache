@@ -53,18 +53,15 @@ class Breadcrumbs(object):
                                      viewName=viewName,
                                      showTitles=showTitles)
     
-
     def slashViewName(self,item, viewName):      
             slashViewName =''
+
             if viewName == '':
-                if IPublicationRoot.providedBy(item):
-                   return '/'
-                else:
                    return ''
             elif viewName=='manage':
-               return '/' + IURLSegment(item).getSegment()
-            else:    
-                return '/' + viewName
+                  viewName=IURLSegment(item).getSegment()                
+
+            return '/' + viewName
                 
     def breadcrumbsCore(self,item,
                         viewName='',
@@ -73,14 +70,19 @@ class Breadcrumbs(object):
 
         parents = lineage_chain(item)
         result=[]
-        base_url = ''
         if parents:
             parents.reverse()
+
             for ancestor in parents:
                 name, title = resolver(ancestor,showTitles)
                 slashViewName = self.slashViewName(ancestor,viewName)
-                base_url += '/' + quote(name.encode('utf-8'), _safe)
-                result.append( self.href(base_url + slashViewName,title))
+                if IPublicationRoot.providedBy(ancestor):
+                   base_url=resolve_url(ancestor,self.request)
+                else:
+                    base_url += '/'
+                    base_url+=quote(name.encode('utf-8'), _safe)
+                newURL= base_url + slashViewName
+                result.append( self.href(newURL,title))
         return ' / '+' / '.join(result)
 
     
