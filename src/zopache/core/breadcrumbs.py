@@ -6,8 +6,12 @@ from cromlech.location import lineage_chain
 from cromlech.location import resolve_url
 from cromlech.location import get_absolute_url
 from dolmen.container import IBTreeContainer
-from zopache.zmi.interfaces import IURLSegment
+from cromlech.browser.interfaces import IPublicationRoot
+from cromlech.security.interfaces import IPrincipal ,IUnauthenticatedPrincipal
 
+
+
+from zopache.zmi.interfaces import IURLSegment
 try:
   from zopache.ttw.acquisition import Acquire
 except ImportError:
@@ -19,8 +23,61 @@ except ImportError:
         from urllib.parse import quote  # Python 3+
 
 _safe = '@+'  # Characters that we don't want to have quoted
+def parents(item):
+    return lineage_chain(item)
+            
+def parentWhichImplements(self,interface):
+          item=self
+          while (item!=None):
+            if interface.providedBy(item):
+                            return item
+            item=item.__parent__
+          return None
 
 
+def reversedParents(self):
+    return reversedParentsUpTo(self,IBreadcrumbsRoot)
+
+def parentsUpTo(self,anInterface):
+    return reversed(reversedParentsUpTo(self,anInterface))
+
+def reversedParentsUpTo(self,anInterface):
+        parents=[]
+        item=self        
+        while (item!=None):
+           parents.append(item)
+           if anInterface.providedBy(item):
+              break
+           item=item.__parent__      
+        return parents
+
+
+
+def parentWhichImplements(self,interface):
+        item=self        
+        while (item!=None):
+           if interface.providedBy(item):
+              return item
+           item=item.__parent__      
+        return None
+
+def parentsWhichImplement(self,interface):
+        item=self        
+        result=[]
+        while (item!=None):
+           if interface.providedBy(item):
+              result.append(item)
+           item=item.__parent__      
+        return result
+
+
+
+def parentalMethod(self,method):
+   for item in parents(self):
+       if hasattr(item,method):
+          return item.__getattr__(method)
+   raise Exception("NO SUCH METHOD FOUND")
+                                   
 
 def nameAndTitle(item,showTitles):
         """Choose a display name for the current context.
@@ -38,7 +95,10 @@ def nameAndTitle(item,showTitles):
 
 
 class Breadcrumbs(object):
-    
+
+    def isAuthenticated(self):
+       return not IUnauthenticatedPrincipal.providedBy(self.request.principal)
+ 
     def breadcrumbsIndex(self,item):
         return self.breadcrumbsView(item,viewName='',showTitles=True)
     
@@ -47,6 +107,12 @@ class Breadcrumbs(object):
     
     def breadcrumbs(self):
             return self.breadcrumbsIndex(self.context)
+
+    def breadcrumbsParent(self):
+        if IPublicationRoot.providedBy(self.context):
+            return self.breadcrumbsIndex(self.context)
+        else:
+            return self.breadcrumbsIndex(self.context.__parent__)          
             
     def breadcrumbsView(self,item, viewName='',showTitles=True):
         return  self.breadcrumbsCore(item,
@@ -108,7 +174,7 @@ class Breadcrumbs(object):
 
     def acquireTitle(self):
         parents = lineage_chain(self.context)
-        parents.reverse()
+        #parents.reverse()
         for item in parents:
             if (hasattr(item,'title') and
                item.title!=''):
@@ -130,6 +196,18 @@ class Breadcrumbs(object):
         container = item.__parent__
         result = self.url(container)+ '/' + item.__name__
         return result
+
+    def getDomain(self):
+        return self.domain(self.context)
+      
+    def domain(self,item):
+        if IPublicationRoot.providedBy(item):
+           result = self.request.application_url[8:]
+           result = result.lower()
+           return result
+        container = item.__parent__
+        result = self.domain(container)
+        return result      
 
    
     def objectHref(self,obj,name):

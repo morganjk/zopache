@@ -54,6 +54,7 @@ class IContainer(
                  IBTreeContainer,
                  IAddContainer,
                  IRenameable,
+                 IMoveable,
                  ICopyable,
                  IDisplayable,
                  IDeletable

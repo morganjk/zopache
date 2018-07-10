@@ -53,6 +53,7 @@ class Cutter(BaseClass):
     """
 
     def cut(self):
+
         """ Move the object to the pastefolder"""
         if not self.allowed():
                 return

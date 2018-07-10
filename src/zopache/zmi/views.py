@@ -46,13 +46,19 @@ class Manage(Page,Contents):
            return ''
        
 #USED TO FIRE UP A DEBUGGER TO MAKE MANUAL CHANGES    
+@view_component
+@name('fix')
+@title("Fix")
+@target(ITab)
+@permissions('Manage')
+@context(IBTreeContainer)
 class Fix(Manage):
        def update(self):
           item=self.context
           import pdb; pdb.set_trace()
-          from privacv.skill import doit
-          doit(item)
-          resource.style.need()
+#          from zopache.categories.youtube.getvotes import recordVotes
+#          recordVotes(item.talks)
+          fred = 1
 
 
 

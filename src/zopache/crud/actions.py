@@ -53,7 +53,7 @@ class Add(Action):
         baseURL = str(IURL(obj, form.request))    
         self.new=form.new=obj
         url=self.newURL(baseURL)
-        form.postProcess()
+        form.new.postProcess()
         return SuccessMarker('Added', True, url=url,code=307)
 
     def newURL(self,baseURL):
@@ -81,10 +81,10 @@ class Update(Action):
         url=self.newURL(baseURL)
         return SuccessMarker('Updated', True, url=url)
 
-        def newURL(self,baseURL):
-            return baseURL 
+    def newURL(self,baseURL):
+            return self.form.request.url
 
-        def postProcess(self):
+    def postProcess(self):
             pass
         
 #JUST TO MAKE IT EASIER TO UNDERSTAND        

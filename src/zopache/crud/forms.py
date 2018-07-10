@@ -61,7 +61,8 @@ class EditForm(Form):
     subTitle='Edit This Object'
     ignoreContent = False
     ignoreRequest = False
-    actions = Actions(formactions.Update(_("Update","Save And View")),
+    actions = Actions(formactions.Edit(_("Edit","Save")),
+                      formactions.SaveAndView(_("SaveAndView","Save And View")),
                       formactions.Cancel(_("Cancel","Cancel")))
     @CachedProperty
     def fields(self):

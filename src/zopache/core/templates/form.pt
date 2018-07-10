@@ -21,6 +21,14 @@
     </ul>
   </div>
 
+  <div class="form-error"
+       tal:condition="view.errors">
+    <ul tal:condition="view.submissionError"
+        tal:repeat="error view.submissionError">
+      <li> <span tal:replace="error.title" /> </li>
+    </ul>
+  </div>
+
   <tal:fields condition="view.fieldWidgets">
     <div tal:attributes="class widget.required and 'form-group required' or 'form-group'"
 	 tal:repeat="widget view.bootstrap_widgets()">

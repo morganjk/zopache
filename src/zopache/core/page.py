@@ -19,12 +19,5 @@ class Page(View,Scripts,Breadcrumbs):
     responseFactory = Response
     make_response = make_layout_response
 
-           
 
-
-
-    # Don't show add HTML CSS Javascript Image
-    #def contentItems(self):
             
-#if IWeb.implementedBy(aClass):
- #                  continue       

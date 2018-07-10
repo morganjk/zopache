@@ -37,3 +37,10 @@ class Form(BaseForm,Scripts,Breadcrumbs):
 
     def breadcrumbs(self):     
         return self.breadcrumbsManage()
+
+    def debug(self):
+         import pdb; pdb.set_trace()
+         pass
+
+    def url(self):
+        return get_absolute_url(self.context, self.request)     
