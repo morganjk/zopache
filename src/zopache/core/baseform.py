@@ -20,6 +20,12 @@ class Form(BaseForm,Scripts,Breadcrumbs):
     responseFactory = Response
     make_response = make_layout_response
     template = tal_template('form.pt')
+    def widgetDictionary(self):
+        return {c.htmlId():c for c in self.bootstrap_widgets()}
+
+    def fieldDictionary(self):
+        return {c.__name__:c for c in self.fields}    
+
 
     def bootstrap_widgets(self):
         """Adds the needed css classes for bootstrap styles.

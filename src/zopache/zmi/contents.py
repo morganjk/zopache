@@ -153,7 +153,7 @@ class Contents(object):
 
 
             info['modified']  = (
-                arrow.get(self.context._p_mtime).humanize()[:-3])        
+                arrow.get(obj._p_mtime).humanize()[:-3])        
             info['retitleable'] = 0
             info['plaintitle'] = 1
             info['size']=size(obj)
