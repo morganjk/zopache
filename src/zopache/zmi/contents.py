@@ -226,11 +226,9 @@ class Contents(object):
 
         container = self.context
         for id in ids:
-            #BLOGORY Categories cannot delete full items. 
-            # WE REALLY WANT THIS TO BE IN AN ADAPTER
-            #if hasattr(container,'canDeleteId') and not container.canDeleteId(id):
-            #   continue
-            del container[id]
+            contained = container [id]
+            deleter = IObjectDeleter(contained)
+            deleter.deleteItem(self)
 
     def copyObjects(self):
         """Copy objects specified in a list of object ids"""

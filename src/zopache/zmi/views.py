@@ -56,9 +56,16 @@ class Fix(Manage):
        def update(self):
           item=self.context
           import pdb; pdb.set_trace()
-#          from zopache.categories.youtube.getvotes import recordVotes
-#          recordVotes(item.talks)
+          from zopache.categories.data.youtube.createFromPlayList import createVideos
+#          createVideos(item) 
+#          doit(item,self)
           fred = 1
+
+          #  from zopache.categories.youtube.createFromPlayList import createVideos
+   #       createVideos(item)
+
+  #       self.request.environ['zodb.connection'].db().pack()
+
 
 
 

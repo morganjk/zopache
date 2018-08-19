@@ -116,7 +116,6 @@ class Paster(BaseClass):
                 return True
         return False
 
-
 @crom.adapter
 @crom.sources(Interface)
 @crom.target(IObjectRenamer)
@@ -136,21 +135,22 @@ class Renamer(BaseClass):
                 return True
         return False
 
-
+#THIS IS THE GENERIC DELETER
+# JUST DELETE THE OBJECT
 @crom.adapter
 @crom.sources(Interface)
 @crom.target(IObjectDeleter)
 class Deleter(BaseClass):
-    def deleteItem(self):
+    def deleteItem(self,view):
         obj=self.context
         container=obj.__parent__
+        if not self.allowed():
+            view.error +=  name + " was not deleted. <br>"
+            return
         name=obj.__name__
-        if not self.allowed(obj):
-                     return
         del container[name]
 
     def allowed(self):
-        if  IRenameable.providedBy(self.context):
+        if  IDeletable.providedBy(self.context):
                 return True
         return False
-    
