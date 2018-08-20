@@ -36,12 +36,12 @@ class BaseClass(object):
     def __init__(self, object):
         self.context = object
         self.__parent__ = object # TODO: see if we can automate this
-
+        
     def uniqueName(self,target, new_name):
         return uniqueName(target, new_name)
 
     def moveFrom(self,firstFolder,firstName, secondFolder, secondName):
-        obj=firstFolder[firstName]                   
+        obj=firstFolder[firstName]
         del firstFolder [firstName]
         secondFolder[secondName] = obj
 
@@ -52,8 +52,8 @@ class Cutter(BaseClass):
     """Adapter for moving objects between containers
     """
 
-    def cut(self):
-
+    def cut(self,view):
+        self.view = view        
         """ Move the object to the pastefolder"""
         if not self.allowed():
                 return
@@ -73,7 +73,8 @@ class Cutter(BaseClass):
 @crom.sources(Interface)
 @crom.target(IObjectCopier)
 class Copier(BaseClass):
-    def copy(self):
+    def copy(self,view):
+        self.view = view        
         """ Move the object to the pastefolder"""
         obj=self.context
         if not self.allowed():
@@ -96,7 +97,8 @@ class Copier(BaseClass):
 @crom.target(IObjectPaster)
 class Paster(BaseClass):
                            
-    def paste(self):
+    def paste(self,view):
+        self.view = view        
         """Copy this object to the `target` given.
         """
         toContainer = self.context
@@ -109,6 +111,9 @@ class Paster(BaseClass):
         for item in items:    
            orig_name = item.__name__
            new_name=self.uniqueName(toContainer,orig_name)
+           if not self.allowed(item):
+               self.view.error +=orig_name + " NOT PASTED"
+               continue 
            self.moveFrom(fromFolder, orig_name, toContainer, new_name)
 
     def allowed(self,obj):
@@ -120,7 +125,8 @@ class Paster(BaseClass):
 @crom.sources(Interface)
 @crom.target(IObjectRenamer)
 class Renamer(BaseClass):
-    def renameItem(self, oldName, newName):
+    def renameItem(self, oldName, newName,view):
+        self.view = view
         container=self.context
         obj = container.get(oldName)
         if obj is None:
@@ -142,10 +148,11 @@ class Renamer(BaseClass):
 @crom.target(IObjectDeleter)
 class Deleter(BaseClass):
     def deleteItem(self,view):
+        self.view = view
         obj=self.context
         container=obj.__parent__
         if not self.allowed():
-            view.error +=  name + " was not deleted. <br>"
+            self.view.error +=  name + " was not deleted. <br>"
             return
         name=obj.__name__
         del container[name]

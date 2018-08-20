@@ -176,7 +176,7 @@ class Contents(object):
         renamer = IObjectRenamer(self.context)
         for oldid, newid in zip(ids, newids):
             if newid != oldid:
-                renamer.renameItem(oldid, newid)
+                renamer.renameItem(oldid, newid,self)
 
     def changeTitle(self):
         """Given a sequence of tuples of old, new ids we rename"""
@@ -252,7 +252,7 @@ class Contents(object):
                 else:
                     self.error = "Object cannot be copied"
                 return
-            copier.copy()
+            copier.copy(self)
 
 
     def cutObjects(self): 
@@ -264,7 +264,7 @@ class Contents(object):
             return
         for id in ids:
             ob = self.context[id]
-            cutter = self.cutter=Cutter(ob)
+            cutter = self.cutter=IObjectCutter(ob)
             if not cutter.allowed():
                 m = {"name": id}
                 title = title_or_name(ob)
@@ -276,7 +276,7 @@ class Contents(object):
 
                                   
                 return
-            cutter.cut()
+            cutter.cut(self)
 
     def pasteable(self):
         """Decide if there is anything to paste
@@ -294,7 +294,7 @@ class Contents(object):
             items.append(item)
         for item in items:
            paster = IObjectPaster(target)
-           paster.paste()
+           paster.paste(self)
 
 
     def  hasClipboardContents(self):
