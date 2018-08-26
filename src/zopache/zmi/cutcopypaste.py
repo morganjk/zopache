@@ -137,6 +137,10 @@ class Paster(BaseClass):
 @crom.sources(Interface)
 @crom.target(IObjectRenamer)
 class Renamer(BaseClass):
+    def __init__(self, object):
+        self.context = object.__parent__
+        self.__parent__ = object.__parent__ # TODO: see if we can automate this
+        
     def renameItem(self, oldName, newName,view):
         self.view = view
         container=self.context

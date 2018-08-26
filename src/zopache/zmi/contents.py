@@ -172,10 +172,9 @@ class Contents(object):
         request = self.request
         ids = request.POST.getall("rename_ids:list")
         newids = request.POST.getall("new_value:list")
-
-        renamer = IObjectRenamer(self.context)
         for oldid, newid in zip(ids, newids):
             if newid != oldid:
+                renamer = IObjectRenamer(self.context[oldid])
                 renamer.renameItem(oldid, newid,self)
 
     def changeTitle(self):
