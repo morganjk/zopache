@@ -31,12 +31,22 @@ from zopache.zmi.interfaces import IObjectPaster
 from dolmen.container.interfaces import IBTreeContainer#, IOrderedContainer
 from .utilities import pasteFolder
 from zopache.crud.utilities import uniqueName
+import transaction
 
 class BaseClass(object):
     def __init__(self, object):
         self.context = object
         self.__parent__ = object # TODO: see if we can automate this
-        
+
+    def describeTransaction(self,type, item):        
+         note = type + ' ' + item.__name__ + " "
+         #try:
+         #    note +=item.title
+         #except:
+         #    pass
+         note += "<br>"
+         transaction.get().note(note)
+    
     def uniqueName(self,target, new_name):
         return uniqueName(target, new_name)
 
@@ -57,12 +67,14 @@ class Cutter(BaseClass):
         """ Move the object to the pastefolder"""
         if not self.allowed():
                 return
-        obj=self.context    
+        obj=self.context
         oldName=obj.__name__
         toFolder=pasteFolder(self)
+
         newName=self.uniqueName(toFolder,oldName)
         container = obj.__parent__
         self.moveFrom(container, oldName, toFolder, newName)        
+        self.describeTransaction(" Cut ", obj)
 
     def allowed(self):
         if  IMoveable.providedBy(self.context):

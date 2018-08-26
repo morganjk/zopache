@@ -93,8 +93,15 @@ def nameAndTitle(item,showTitles):
             return name, title
         return name, name
 
-
+from pydoc import locate
 class Breadcrumbs(object):
+
+    def implements (self,dottedName):
+        myInterface = locate(dottedName)
+        if myInterface == None:
+            return False
+        result = myInterface.providedBy(self.context)
+        return result
 
     def isAuthenticated(self):
        return not IUnauthenticatedPrincipal.providedBy(self.request.principal)
@@ -221,3 +228,19 @@ class Breadcrumbs(object):
               result += name
            result +='</a>'
            return result
+
+    def divBreadcrumbs(self, node):     
+        items=list(parents(node))
+        items.reverse()
+        result= '<div style = "text-align:left; ">'
+        step = -1
+        for item in items:
+                   step += 1
+                   result += '<div style = "margin-left:' 
+                   result +=  str(step) + 'em">'
+                   result += self.href(('/' + item.__name__),item.title)
+                   result +=  ' &nbsp;(' + str(item.branchSize) + ')' 
+                   result +=  '</div>'
+        result += "</div>"
+        return result
+    
